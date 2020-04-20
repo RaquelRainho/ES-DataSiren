@@ -1,0 +1,5 @@
+com\springKafka\datasiren\configurations\WebSocketConfig.class
+com\springKafka\datasiren\services\KafkaConsumerService.class
+com\springKafka\datasiren\configurations\KafkaConsumerConfig.class
+com\springKafka\datasiren\datasirenApplication.class
+com\springKafka\datasiren\controllers\HomeController.class

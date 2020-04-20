@@ -1,0 +1,218 @@
+{
+"type":"FeatureCollection",
+"crs":{
+"type":"name",
+"properties":{
+"name":"urn:ogc:def:crs:OGC:1.3:CRS84"
+}
+},
+"features":[{
+"type":"Feature",
+"properties":{
+"station_id":"1",
+"name":"DETI"
+},
+"geometry":{
+"type":"Point",
+"coordinates": [
+            -8.658771514892578,
+            40.63306664185673
+          ]
+}
+},{
+"type":"Feature",
+"properties":{
+"station_id":"2",
+"name":"Reitoria"
+},
+"geometry":{
+"type":"Point",
+"coordinates": [
+            -8.657789826393127,
+            40.63193284946615
+          ]
+}
+},{
+"type":"Feature",
+"properties":{
+"station_id":"3",
+"name":"Avenida da Universidade"
+},
+"geometry":{
+"type":"Point",
+"coordinates":[
+            -8.654834032058716,
+            40.631574591494456
+          ]
+}
+},{
+"type":"Feature",
+"properties":{
+"station_id":"4",
+"name":"Rua Associação Humanitária dos Bombeiros Voluntários"
+},
+"geometry":{
+"type":"Point",
+"coordinates":[
+            -8.653248846530914,
+            40.63079089548012
+          ]
+}
+},{
+"type":"Feature",
+"properties":{
+"station_id":"5",
+"name":"Avenida da Oita"
+},
+"geometry":{
+"type":"Point",
+"coordinates": [
+            -8.648525476455688,
+            40.634766276612496
+          ]
+}
+},{
+"type":"Feature",
+"properties":{
+"station_id":"6",
+"name":"Escola Secundária José Estevão"
+},
+"geometry":{
+"type":"Point",
+"coordinates": [
+            -8.648780286312103,
+            40.63768303398241
+          ]
+}
+},{
+"type":"Feature",
+"properties":{
+"station_id":"7",
+"name":"Avenida Santa Joana"
+},
+"geometry":{
+"type":"Point",
+"coordinates":[
+            -8.651221096515656,
+            40.63873531502603
+          ]
+}
+},{
+"type":"Feature",
+"properties":{
+"station_id":"8",
+"name":"Avenida Artur Ravara"
+},
+"geometry":{
+"type":"Point",
+"coordinates": [
+            -8.65448534488678,
+            40.63627453900612
+          ]
+}
+},{
+"type":"Feature",
+"properties":{
+"station_id":"9",
+"name":"Avenida Instituto Confúcio"
+},
+"geometry":{
+"type":"Point",
+"coordinates": [
+            -8.657231926918028,
+            40.634723531837636
+          ]
+}
+},{
+"type":"Feature",
+"properties":{
+"station_id":"10",
+"name":"Nacional 109"
+},
+"geometry":{
+"type":"Point",
+"coordinates": [
+            -8.648589849472046,
+            40.6256671289371
+          ]
+}
+},{
+"type":"Feature",
+"properties":{
+"station_id":"11",
+"name":"Avenida Mário Sacramento"
+},
+"geometry":{
+"type":"Point",
+"coordinates": [
+            -8.647833466529846,
+            40.628154759567266
+          ]
+}
+},{
+"type":"Feature",
+"properties":{
+"station_id":"12",
+"name":"Avenida Araújo e Silva"
+},
+"geometry":{
+"type":"Point",
+"coordinates":  [
+            -8.650569319725037,
+            40.63472149637149
+          ]
+}
+},{
+"type":"Feature",
+"properties":{
+"station_id":"13",
+"name":"Avenida Artur Ravara"
+},
+"geometry":{
+"type":"Point",
+"coordinates": [
+            -8.658771514892578,
+            40.63306664185673
+          ]
+}
+},{
+"type":"Feature",
+"properties":{
+"station_id":"14",
+"name":"Avenida de Bourges"
+},
+"geometry":{
+"type":"Point",
+"coordinates":  [
+            -8.643413186073303,
+            40.63240102460011
+          ]
+}
+},{
+"type":"Feature",
+"properties":{
+"station_id":"15",
+"name":"Avenida 5 de Outubro"
+},
+"geometry":{
+"type":"Point",
+"coordinates": [
+            -8.648300170898438,
+            40.64055895817096
+          ]
+}
+},{
+"type":"Feature",
+"properties":{
+"station_id":"16",
+"name":"Estação da Luz"
+},
+"geometry":{
+"type":"Point",
+"coordinates":[
+            -8.641331791877747,
+            40.64342865285832
+          ]
+}
+}]
+}
