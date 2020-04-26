@@ -1,6 +1,8 @@
 pipeline {
 	agent any
-
+        environment {
+            CI = 'true'
+        }
 	stages{
             stage('Build stage'){
                 agent{
@@ -8,7 +10,7 @@ pipeline {
                         args '-v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -v "$PWD/target:/usr/src/mymaven/target" -w /usr/src/mymaven'
                     }
                 }
-                steps{
+                steps
                     sh 'echo "trying to build"'
                     sh 'cp /root/settings.xml /root/.m2/settings.xml'
                     sh 'ls -la /root/.m2'
@@ -24,6 +26,8 @@ pipeline {
                 }
                 steps{
                     sh 'echo "trying to deploy"'
+                    sh 'ls -la /root/.m2'
+                    sh 'ls -la'
                     sh 'mvn deploy'
                 }
             }
