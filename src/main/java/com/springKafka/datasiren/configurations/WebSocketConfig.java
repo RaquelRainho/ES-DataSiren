@@ -12,7 +12,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		registry.addEndpoint("/channel").withSockJS();
+		registry.addEndpoint("/esp24-data").withSockJS();
 	}
 
 	@Override

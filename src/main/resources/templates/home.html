@@ -110,10 +110,10 @@
 		//window.myLine = new Chart(ctx, config);
 		
 		/* Configuring WebSocket on Client Side */
-		var socket = new SockJS('/channel');
+		var socket = new SockJS('/esp24-data');
 		stompClient = Stomp.over(socket);
 		stompClient.connect({}, function(frame) {
-			stompClient.subscribe('/topic/temperature', function(temperature) {
+			stompClient.subscribe('/topic/esp24-data', function(temperature) {
                                 var myJSON = temperature.body;
                                 console.log('--------------------  '+myJSON);
                                 var myObj = JSON.parse(myJSON);

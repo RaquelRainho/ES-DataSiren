@@ -33,10 +33,14 @@ pipeline {
                     sh 'mvn deploy'
                 }
             }
+            stage('Docker image build stage'){
+            
+            }
+
+
             stage('Run stage'){
                 steps{
                     sh 'echo "trying to run"'
-                    sh 'echo "just to make sure this works"'
                 }
             }
 	}
