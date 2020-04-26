@@ -28,7 +28,7 @@ pipeline {
                     sh 'echo "trying to deploy"'
                     sh 'ls -la /root/.m2'
                     sh 'ls -la'
-                    sh 'cat /root/pom.xml'
+                    sh 'cat pom.xml'
                     sh 'cat /root/.m2/settings.xml'
                     sh 'mvn deploy'
                 }
