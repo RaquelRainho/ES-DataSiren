@@ -4,7 +4,7 @@ from itertools import islice
 from time import sleep
 import json
 
-process = pexpect.spawn('./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic channel')
+process = pexpect.spawn('./bin/kafka-console-producer.sh --broker-list 192.168.160.103:9092 --topic esp24-data')
 process.expect('>')
 
 data = {"firefighters":[ dict() ,  dict() ,  dict() ]}
