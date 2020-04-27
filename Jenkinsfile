@@ -7,6 +7,7 @@ pipeline {
             stage('Build stage'){
                 agent{
                     dockerfile{
+                        filename 'Dockerfile-build'
                         args '-v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -v "$PWD/target:/usr/src/mymaven/target" -w /usr/src/mymaven'
                     }
                 }
@@ -21,6 +22,7 @@ pipeline {
             stage('Deploy (to JFrog) stage'){
                 agent {
                     dockerfile {
+                        filename 'Dockerfile-build'
                         args '-v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven'
                     }
                 }
@@ -33,14 +35,40 @@ pipeline {
                     sh 'mvn deploy'
                 }
             }
-            stage('Docker image build stage'){
-            
+            stage('Cleanup stage'){
+                steps{
+                    sshagent(credentials: ['esp24']){
+                        sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 docker stop esp24-datasiren || true"
+                        sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 docker rm esp24-datasiren || true"
+                    }
+                }
             }
-
-
+            stage('Docker image build stage'){
+                steps{
+                    sh 'ls -la'
+                    sh 'pwd'
+                    sh 'ls /'
+                    script {
+                        dockerImage = docker.build("esp24-datasiren"+ ":$BUILD_NUMBER")
+                    }
+                }
+            }
+            stage('Docker image deploy stage') {
+                steps{
+                    script {
+                        docker.withRegistry( 'http://192.168.160.99:5000') {
+                            dockerImage.push("latest")
+                        }
+                    }
+                }
+            }
             stage('Run stage'){
                 steps{
                     sh 'echo "trying to run"'
+                    sshagent(credentials: ['esp24']){
+                        sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 uname -a
+                        sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 docker run -d -p 24010:8080 -p 24043:8443 --name esp24-datasiren esp24-datasiren"
+                    }
                 }
             }
 	}
