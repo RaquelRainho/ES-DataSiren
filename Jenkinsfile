@@ -67,7 +67,7 @@ pipeline {
                     sh 'echo "trying to run"'
                     sshagent(credentials: ['esp24']){
                         sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 uname -a"
-                        sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 docker run -d -p 24010:8080 --name esp24-datasiren esp24-datasiren"
+                        sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 docker run -d -p 24010:8080 --name esp24-datasiren 192.168.160.99:5000/esp24-datasiren"
                     }
                 }
             }
