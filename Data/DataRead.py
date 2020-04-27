@@ -52,6 +52,6 @@ while True:
 			row = next(csv.reader(islice(csv_file, hr_idx, hr_idx + 1)))
 			data["firefighters"][2].update({"hr": row[1]})
 		hr_idx += 1
-	producer.produce(json.dumps(data))
+	producer.produce(json.dumps(data).encode())
 	sleep(1)
 	c += 1
