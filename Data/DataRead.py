@@ -1,11 +1,12 @@
-import pexpect
 import csv
 from itertools import islice
 from time import sleep
 import json
 
-process = pexpect.spawn('kafka-console-producer.sh --broker-list 192.168.160.103:9092 --topic esp24-data')
-process.expect('>')
+from pykafka import KafkaClient
+client = KafkaClient(hosts='192.168.160.103:9092')
+topic = client.topics['esp24-data']
+producer = topic.get_sync_producer()
 
 data = {"firefighters":[ dict() ,  dict() ,  dict() ]}
 c = 0
@@ -51,7 +52,6 @@ while True:
 			row = next(csv.reader(islice(csv_file, hr_idx, hr_idx + 1)))
 			data["firefighters"][2].update({"hr": row[1]})
 		hr_idx += 1
-	process.sendline(json.dumps(data))
-	process.expect('>')
-	sleep(2)
+	producer.produce(json.dumps(data))
+	sleep(1)
 	c += 1
