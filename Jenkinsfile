@@ -15,10 +15,20 @@ pipeline {
                     sh 'echo "trying to build"'
                     sh 'cp /root/settings.xml /root/.m2/settings.xml'
                     sh 'ls -la /root/.m2'
-                    sh 'mvn package'
+                    sh 'mvn -Dskiptests package'
                     sh 'ls -la target'
                 }
             }
+            stage('Test stage'){
+                when{
+                    branch 'testing'
+                }
+                steps{
+                    sh 'echo "running tests"'
+                    //sh 'mvn test'
+                }
+            }
+
             stage('Deploy (to JFrog) stage'){
                 agent {
                     dockerfile {
