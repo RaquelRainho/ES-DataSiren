@@ -7,7 +7,7 @@
 	<groupId>pt.ua.deti.es.g24</groupId>
 	<artifactId>datasiren</artifactId>
 	<version>0.0.1</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>datasiren</name>
 	<description>The hottest way to collect firefighter's data</description>
