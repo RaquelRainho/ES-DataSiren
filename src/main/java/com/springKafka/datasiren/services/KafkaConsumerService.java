@@ -12,8 +12,13 @@ public class KafkaConsumerService{
 	@Autowired
 	SimpMessagingTemplate template;
 	
+        @Autowired
+        private DataStoreService DatabaseManageService;
+            
 	@KafkaListener(topics="${kafka.topic}")
 	public void consume(@Payload String message) {
+                    DatabaseManageService.UpdateFirefighterGroup(message);
+
 			template.convertAndSend("/topic/esp24-data", message);
 		
 		
