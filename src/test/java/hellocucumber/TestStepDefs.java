@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import org.jsoup.Jsoup;
 import static org.junit.Assert.*;
+import java.nio.file.Paths;
 
 public class TestStepDefs {
     
@@ -17,18 +18,19 @@ public class TestStepDefs {
     @Given("^I have the current CO sensor data$")
     public void i_have_the_current_CO_sensor_data(){
         System.out.println("\n - SCENARIO 1 - ");
-        firefighterID = 1;
-        firefighterLat = 10;
-        firefighterLong = 10;
-        firefighterAlt = 50;
-        System.out.printf("I have the current sensor data from firefighter %d: Lat %d, Long %d, Alt %d\n",
-                firefighterID, firefighterLat, firefighterLong, firefighterAlt);
+        firefighterCO = 251;
+        try{
+            Runtime.getRuntime().exec("python " + Paths.get(System.getProperty("user.dir"), "src", "test", "resources", "DataRead-test1.py").toString() + " " + firefighterCO);
+            //Runtime.getRuntime().exec("python C:\\DataRead-test1.py " + firefighterCO);
+        } catch (IOException ex) {
+            System.out.println(ex);
+        }
     }
     
     @When("^the level of CO in the air is greater than (\\d+) ppm$")
     public void the_level_of_CO_in_the_air_is_greater_than_ppm(int arg1){
-        firefighterCO = arg1 + 1;
-        System.out.println("Current CO level: " + firefighterCO);
+        assertTrue(firefighterCO > arg1);
+        //System.out.println("Current CO level: " + firefighterCO);
     }
     
     @Then("^send a notification to the webpage saying \"([^\"]*)\"$")
@@ -41,14 +43,15 @@ public class TestStepDefs {
             String html = Jsoup.connect(webPage).get().getElementById("noti").html();
             System.out.println(html);
             //assertEquals("Datasiren",html);
-            System.out.println("The firefighter "+firefighterID+" is located in ("+firefighterLat+ ", "+ firefighterLong+") and has entered a dangerous environment");
+            //System.out.println("The firefighter "+firefighterID+" is located in ("+firefighterLat+ ", "+ firefighterLong+") and has entered a dangerous environment");
             //assertTrue(html.contains("The firefighter "+firefighterID+" is located in ("+firefighterLat+ ", "+ firefighterLong+") and has entered a dangerous environment"));
-            assertTrue(html.contains(" is located in ("+firefighterLat+ ", "+ firefighterLong+") and has entered a dangerous environment"));
+            assertTrue(html.contains(" and has entered a dangerous environment"));
         }catch(IOException e){
             System.out.println("Exception: " + e);
             e.printStackTrace();
         }
     }
+    
     
     /*  SCENARIO 5  */
     
