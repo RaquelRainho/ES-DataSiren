@@ -26,7 +26,7 @@ input.button_follow {
     padding-left: 36px;
     border-radius: 50px;
     color: white;
-    background: #1f8dc0 url(../images/route_icons/demo/follow.svg) no-repeat 10px center;
+    background: #1f8dc0 url(/static/images/route_icons/demo/follow.svg) no-repeat 10px center;
 }
 input.button_draw {
     
@@ -36,7 +36,7 @@ input.button_draw {
     padding-left: 36px;
     border-radius: 50px;
     color: white;
-    background: #1f8dc0 url(../images/route_icons/demo/draw.svg) no-repeat 8px center;
+    background: #1f8dc0 url(/static/images/route_icons/demo/draw.svg) no-repeat 8px center;
 }
 /* SIMULATION PANEL */
 #panel {
@@ -176,5 +176,4 @@ span.vehicle_name {
     font-size: 18pt;
     
 }
-
 /* END */

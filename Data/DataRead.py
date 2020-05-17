@@ -8,7 +8,7 @@ client = KafkaClient(hosts='192.168.160.103:9093')
 topic = client.topics['esp24_AllSensorData']
 producer = topic.get_sync_producer()
 
-data = {"firefighters":[ dict() ,  dict() ,  dict() ]}
+data = {"firefighters":[ dict() ,  dict() ,  dict() ], "alerts":[]}
 c = 0
 env_idx = gps_idx = hr_idx = 1
 env_period = 60 / 6

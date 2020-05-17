@@ -13290,15 +13290,15 @@ fieldset[disabled] .form-group .form-control {
   top: 5px;
   border: 1px solid #FFF;
   right: 10px;
-  font-size: 9px;
+  font-size: 19px;
   background: #f44336;
   color: #FFFFFF;
   min-width: 20px;
   padding: 0px 5px;
-  height: 20px;
-  border-radius: 10px;
+  height: 28px;
+  border-radius: 50px;
   text-align: center;
-  line-height: 19px;
+  line-height: 28px;
   vertical-align: middle;
   display: block;
 }
@@ -14826,7 +14826,7 @@ fieldset[disabled] .form-group.is-focused .togglebutton label {
 
 .sidebar[data-image]:after,
 .sidebar.has-image:after {
-  opacity: .77;
+  opacity: .97;
 }
 
 .off-canvas-sidebar .navbar-collapse .nav>li>a,
@@ -19600,11 +19600,10 @@ Copyright (c) 2015 Daniel Eden
 }
 
 .dark-edition .navbar .notification {
-  background: linear-gradient(60deg, #7b1fa2, #913f9e);
+  background: linear-gradient(60deg, #0099ff, #0099ff);
   border: 0;
-  height: 18px;
-  min-width: 18px;
-  right: 12px;
+  height: 28px;
+  right: 95px;
 }
 
 .dark-edition .navbar .navbar-toggler .icon-bar {
