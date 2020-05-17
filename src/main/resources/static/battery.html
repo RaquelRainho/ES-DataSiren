@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+</head>
+<style>
+
+    .battery {
+        display: inline-block;
+        width: 4.5em;
+        height: 10em;
+        border: 1em solid #191919;
+        border-width: .5em 1em;
+        box-shadow: 0 0 0 1.0em white, 0 0 1.0em white;
+        border-radius: 2%;
+        margin: 4em 1.5em 1.5em;
+        position: relative;
+        background-color: green;
+        background-image: linear-gradient(180deg, #191919 .5em, #191919 .5em, transparent .5em, transparent 2em, #191919 2em, #191919 3em, transparent 3em, transparent 4.5em, #191919 4.5em, #191919 5.5em, transparent 5.5em, transparent 7em, #191919 7em, #191919 8em, transparent 8em, transparent 9.5em, #191919 9.5em);
+        background-size: 100%;
+    }
+
+    .battery:before {
+        opacity: 0%;
+        position: absolute;
+        top: -4.0em;
+        left: 0em;
+        display: block;
+        background: white;
+        box-shadow: 0 0 0.1em white;
+        width: 4.5em;
+        height: 1.5em;
+        content: "";
+        border-radius: 0.9em 0.9em 0 0;
+    }
+
+    .battery:after {
+        position: absolute;
+        top: 0em;
+        left: 0em;
+        display: block;
+        background: #191919;
+        width: 4.5em;
+        height: 0;
+        content: "";
+    }
+
+    .battery.level-75:after {
+        height: 2em;
+    }
+
+    .battery.level-50:after {
+        height: 4.5em;
+    }
+
+    .battery.level-25:after {
+        height: 7em;
+    }
+
+    .battery.level-25 {
+        background-color: red;
+    }
+
+    .battery.level-0:after {
+        height: 9.5em;
+    }
+
+    .animatee {
+        animation: color 5s ease-in-out infinite;
+    }
+
+    @keyframes color {
+
+        0%,
+        100% {
+            text-shadow: 0 0 0;
+        }
+
+        25% {
+            text-shadow: 0 0 0.2em gold, 0 0 0.4em gold;
+        }
+
+        50% {
+            text-shadow: 0 0 0;
+        }
+
+        75% {
+            text-shadow: 0 0 0.2em gold, 0 0 0.4em gold;
+        }
+    }
+
+    .Color {
+        text-shadow: 0 0 0.2em green, 0 0 0.4em green, 0 0 0.6em green;
+    }
+
+    .Low {
+        text-shadow: 0 0 0.2em red, 0 0 0.4em red, 0 0 0.6em red;
+    }
+</style>
+<script>
+   
+    var battery_level;
+    navigator.getBattery().then(function (battery) {
+        function updateAllBatteryInfo() {
+            battery_level = (battery.level * 100) | 0;
+            updateCharge();
+            updateLevelInfo();
+        }
+        updateAllBatteryInfo();
+        battery.addEventListener('chargingchange', function () {
+            updateCharge();
+        });
+
+        function updateCharge() {
+            if (battery.charging == true) {
+                $("#p2").css("background-color", "gold");
+                $("div").addClass("animatee");
+                setText("");
+                setMessage(battery_level + "%⚡");
+            } else {
+                $("#p2").css("background-color", "green");
+                updateLevelInfo();
+            }
+        }
+        battery.addEventListener('levelchange', function () {
+            updateLevelInfo();
+        });
+
+        function updateLevelInfo() {
+            $("div").removeClass("Low");
+            $("div").removeClass("animatee");
+            $("div").addClass("Color");
+            setMessage("");
+            setText(battery_level + "%");
+            if ((battery.level * 100) <= 15) {
+                $("#p2").addClass("battery level-25");
+                $("div").removeClass("Color");
+                $("#p2").css("background-color", "red");
+                $("div").addClass("Low");
+            } else if ((battery.level * 100) <= 25) {
+                $("#p2").addClass("battery level-25");
+            } else if ((battery.level * 100) <= 50) {
+                $("#p2").addClass("battery level-50");
+            } else if ((battery.level * 100) <= 75) {
+                $("#p2").addClass("battery level-75");
+            } else if ((battery.level * 100) <= 100) {
+                $("#p2").addClass("battery level-100");
+            } else if ((battery.level * 100) == 0) {
+                $("#p2").addClass("battery level-0");
+            }
+            setInterval(updateCharge, 1);
+        }
+    });
+
+    function setMessage(msg) {
+        document.getElementById("message").innerText = msg;
+    }
+
+    function setText(msg) {
+        document.getElementById("nocharge").innerText = msg;
+    }
+</script>
+
+<body>
+        <p id="p2"></p>
+        <font size=25>
+            <div id="message "></div>
+            <div id="nocharge "></div>
+</body>
+
+</html>
+<!--Code from Mad Publications-->

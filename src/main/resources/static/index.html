@@ -1,0 +1,315 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+    <head>
+        <title>DataSiren</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        
+    <link href="assets/img/favicon.png" rel="icon" type="image/png">
+        <link href="static/css/reset.css" rel="stylesheet" type="text/css" />
+        <link href="static/css/style.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+      <style>
+          .slidecontainer {
+  width: 100%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 25px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: rgb(216, 22, 22);
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  background: rgb(104, 31, 18);
+  cursor: pointer;
+}
+         #div1 {
+  font-size:38px;
+}
+.column {
+  float: left;
+  width: 23.33%;
+  padding: 10px;
+  height: 200px; /* Should be removed. Only for demonstration */
+}
+.column1 {
+    text-align: center;
+  float: left;
+  width: 5%;
+  padding-left: 1px; /* Should be removed. Only for demonstration */
+}
+.column2 {
+    text-align: center;
+  float: right;
+  width: 80%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+  padding-left: 1px;
+}
+#center {
+  margin: auto;
+  width: 100%;
+  padding: 10px;
+}
+
+      </style>
+      <script>
+        window.onload = function () {
+        
+        var dps = []; // dataPoints
+        var chart = new CanvasJS.Chart("chartContainer", {
+            animationEnabled: true,
+        backgroundColor: "rgba(255,101,80,0)",
+        theme: "light2",
+            axisY2: {
+                labelFontColor: "white",
+                gridThickness: 0,
+    tickLength: 0,
+    lineThickness: 0,
+                includeZero: false
+            },
+            axisX: {
+                labelFontColor: "white",
+                gridThickness: 0,
+    tickLength: 0,
+    lineThickness: 0,
+                includeZero: false
+            },
+            toolTip:{
+		shared:true,
+        backgroundColor: "#3f3361",
+        
+        contentFormatter: function (e) {
+ 
+                var content = "<span style=\"color:	#e6f2ff;\">Time: </span> " + "<strong> <span style=\"color: white;\">"+e.entries[0].dataPoint.x +"</span></strong>";
+                content += "<br/>";
+				content += "<span style=\"color:#e6f2ff;\">Rate: </span> " + "<strong> <span style=\"color: white;\">"+e.entries[0].dataPoint.y +" bpm</span></strong>";
+				content += "<br/>";
+				
+				return content;
+			},
+			
+        cornerRadius: 20,
+           borderColor: "#b3003b",
+    }, 
+    	 
+            data: [{
+                axisYType: "secondary",
+                type: "line",
+                dataPoints: dps,
+                color: "#b3003b",
+            }],
+            
+        });
+        
+        var xVal = 0;
+        var yVal = 100; 
+        var updateInterval = 1000;
+        var dataLength = 20; // number of dataPoints visible at any point
+        
+        var updateChart = function (count) {
+        
+            count = count || 1;
+        
+            for (var j = 0; j < count; j++) {
+                yVal = yVal +  Math.round(5 + Math.random() *(-5-5));
+                dps.push({
+                    x: xVal,
+                    y: yVal
+                });
+                document.getElementById('rate').innerHTML = yVal;
+                xVal++;
+            }
+        
+            if (dps.length > dataLength) {
+                dps.shift();
+            }
+        
+            chart.render();
+        };
+        
+        updateChart(dataLength);
+        setInterval(function(){updateChart()}, updateInterval);
+        
+        }
+        </script>
+    </head>
+    <body>
+        <div id="map_canvas"></div>
+        <img id="logo" src="/static/images/logo.png" style="position:fixed;
+                left:0;
+        top:80px;
+        margin:0;
+        padding:0;
+        width:15%;"/>
+        <div id="panel" class="hidden">
+            <div>
+                <center><h3 style="color:white;">FireFighter</h3></center>
+              
+            </div>
+            <div class="section">
+                <b>Time:</b> <span id="day_time"></span> 
+                <!--<select id="as">
+                    <option value="1" selected="selected">1x</option>
+                    <option value="5">5x</option>
+                    <option value="10">10x</option>
+                    <option value="100">100x</option>
+                    <option value="-1">-1x</option>
+                </select>-->
+                <br/>
+                <div class="slidecontainer">
+                    <input id="time_multiply" type="range" min="-50" max="50" value="1">
+                    
+                    <!--<p>Custom range slider:</p>
+                    <input type="range" min="1" max="100" value="50" class="slider" id="myRange">-->
+                  </div>
+                  <p>Value: <span id="demo"></span>x</p>
+                <input type="button" id="geolocation_click" />
+                <input type="text" id="user_location" />
+            </div>
+
+            <script>
+                var slider = document.getElementById("time_multiply");
+                var output = document.getElementById("demo");
+                output.innerHTML = slider.value;
+                
+                slider.oninput = function() {
+                  output.innerHTML = this.value;
+                }
+                </script>
+           
+              
+
+
+
+            <div id="vehicle_info" class="hidden section" data-type="panel">
+                <div>
+                    <b><center><span class="vehicle_name"></span> <input type="button" class="panel_collapsible expanded" /><div id="div1" class="fa"></div></center></b>
+
+                    <div class="row" id="center">
+                        <div class="column" >
+                            <div id="image"><center><img id="theImg" src=""  height= 180px; /></center></div>
+                            
+
+
+<script>
+function chargebattery() {
+  var a;
+  a = document.getElementById("div1");
+  a.innerHTML = "&#xf241;";
+  
+}
+chargebattery();
+setInterval(chargebattery, 5000);
+</script>
+                        </div>
+                        <div class="column" >
+                            <img src="static/images/sonar.gif"  style=" padding: 70px 30px;
+                                                        text-align: center;" height= 50px; />
+                        </div>
+                        <div class="column " >
+                            <div id="image"><center><img id="" src="static/images/Ze.png"  height= 180px; />Zé in 5 meters</center></div>
+                        </div>
+                      </div>
+                      <div class="row" id="center">
+                        <div class="column1" >
+                            <img src="static/images/heart2.gif"  style="padding-left: 1px;" height= 50px; /><center><h1 id="rate" style="font-size: 15pt; font-weight: bold; padding-left: 8px; ">059</h1></center>
+                        </div>
+                        <div class="column2" >
+                            <center><div id="chartContainer" style="height: 100px; width:100%;"></div></center>
+                            
+                      <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+                        </div>
+                      </div>
+                   
+                </div>
+               <!----> <div class="panel_content">
+                    <center><div>
+                        
+                        <input id="follow_trigger" type="button" value="Follow" data-value-toggle="STOP" class="button_follow" />
+                        <input id="route_show_trigger" type="button" value="Draw route" data-value-toggle="HIDE" class="button_draw"/>
+                    </div></center>
+
+                   <!-- <div id="vehicle_timetable_container">
+                        <table id="vehicle_timetable" class="panel_table">
+                            <thead>
+                                <tr>
+                                    <td>Nº</td>
+                                    <td class="station">Stops</td>
+                                    <td>Arr.</td>
+                                    <td>Dep.</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>-->
+                </div>
+            </div>
+           <!-- <div id="station_info" class="hidden section" data-type="panel">
+                <div>
+                    <b>Stop:</b> <span class="station_name"></span> <input type="button" class="panel_collapsible expanded" />
+                </div>
+                <div class="panel_content">
+                    <table id="station_departures" class="panel_table">
+                        <thead>
+                            <tr>
+                                <td>Nº</td>
+                                <td class="wide">Bus</td>
+                                <td>To</td>
+                                <td>Dep.</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>-->
+        </div>
+        <div id="vehicle_popup_container" class="hidden">
+            <div id="vehicle_popup">
+                <span class="vehicle_name"></span>
+                <br/>
+                <div id="image"><img id="theImg2" src=""  width= 180px; /></div>
+                <br/>
+                <p class="status"></p>
+
+            </div>
+        </div>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+        <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD4Qdvrk2evUhs_EeBG9jVAPAMaya43yrs&amp;sensor=false&amp;libraries=geometry,places"></script>
+        <script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.1"></script>
+        
+        <script src="static/js/infobox_packed.js"></script>
+        <script src="static/js/map.js"></script>
+    </body>
+</html>

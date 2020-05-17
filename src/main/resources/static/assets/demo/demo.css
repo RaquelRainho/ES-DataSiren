@@ -101,8 +101,6 @@
 
 #map {
   z-index: 2;
-  height: calc(100vh - 70px);
-  margin-top: 70px;
 }
 
 .bd-docs.dark-edition .bd-example {

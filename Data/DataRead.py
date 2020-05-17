@@ -4,18 +4,18 @@ from time import sleep
 import json
 
 from pykafka import KafkaClient
-client = KafkaClient(hosts='192.168.160.103:9092')
-topic = client.topics['esp24-data']
+client = KafkaClient(hosts='192.168.160.103:9093')
+topic = client.topics['esp24_AllSensorData']
 producer = topic.get_sync_producer()
 
-data = {"firefighters":[ dict() ,  dict() ,  dict() ]}
+data = {"firefighters":[ dict() ,  dict() ,  dict() ], "alerts":[]}
 c = 0
 env_idx = gps_idx = hr_idx = 1
 env_period = 60 / 6
 gps_period = 60 / 10
 hr_period = 60 / 60
 
-while True:
+while c < 160:
 	# ENV DATA #
 	if c % env_period == 0:
 		with open('a1_env.csv') as csv_file:

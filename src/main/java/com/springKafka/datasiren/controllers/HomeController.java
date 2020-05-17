@@ -12,4 +12,8 @@ public class HomeController {
 	public String home(Model model) {
 		return "home";
 	}
+        @GetMapping("/timeline")
+	public String timeline(Model model) {
+		return "timeline";
+	}
 }
