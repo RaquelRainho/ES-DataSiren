@@ -19,15 +19,6 @@ pipeline {
                     sh 'ls -la target'
                 }
             }
-            stage('Test stage'){
-                when{
-                    branch 'testing'
-                }
-                steps{
-                    sh 'echo "running tests"'
-                    sh 'mvn test'
-                }
-            }
 
             stage('Deploy (to JFrog) stage'){
                 agent {
@@ -81,6 +72,20 @@ pipeline {
                         sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 python3 DataRead.py &"
                         sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 docker pull 192.168.160.99:5000/esp24-datasiren"
                         sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 docker run -d -p 24010:8080 -p 24848:4848 --name esp24-datasiren 192.168.160.99:5000/esp24-datasiren"
+                    }
+                }
+            }
+
+            stage('Test stage'){
+                when{
+                    branch 'testing'
+                }
+                steps{
+                    sh 'echo "running tests"'
+                    sh 'mvn test'
+                    
+                    sshagent(credentials: ['esp24']){
+                        sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 docker stop esp24-datasiren || true"
                     }
                 }
             }

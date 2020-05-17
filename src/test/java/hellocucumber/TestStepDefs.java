@@ -3,6 +3,10 @@ package hellocucumber;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import java.io.IOException;
+
+import org.jsoup.Jsoup;
+import static org.junit.Assert.*;
 
 public class TestStepDefs {
     
@@ -31,6 +35,19 @@ public class TestStepDefs {
     public void send_a_notification_to_the_webpage_saying(String arg1){
         System.out.printf("Notify dashboard that firefighter %d is in danger at Lat %d, Long %d, Alt %d\n",
                 firefighterID, firefighterLat, firefighterLong, firefighterAlt);
+        
+        String webPage = "http://192.168.160.103:24010/datasiren-0.0.4/home";
+        try{
+            String html = Jsoup.connect(webPage).get().getElementById("noti").html();
+            System.out.println(html);
+            //assertEquals("Datasiren",html);
+            System.out.println("The firefighter "+firefighterID+" is located in ("+firefighterLat+ ", "+ firefighterLong+") and has entered a dangerous environment");
+            //assertTrue(html.contains("The firefighter "+firefighterID+" is located in ("+firefighterLat+ ", "+ firefighterLong+") and has entered a dangerous environment"));
+            assertTrue(html.contains(" is located in ("+firefighterLat+ ", "+ firefighterLong+") and has entered a dangerous environment"));
+        }catch(IOException e){
+            System.out.println("Exception: " + e);
+            e.printStackTrace();
+        }
     }
     
     /*  SCENARIO 5  */
