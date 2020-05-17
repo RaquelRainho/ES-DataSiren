@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-@EnableJpaRepositories
 @ComponentScan("com.springKafka")
 public class datasirenApplication {
 
