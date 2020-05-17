@@ -2,6 +2,8 @@ package com.springKafka.datasiren.services;
 
 import com.google.gson.Gson;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import lombok.extern.slf4j.Slf4j;
@@ -68,17 +70,27 @@ public class SensorProcessService {
         
         String localization = getLocation(id);
         
+        String tempmessage="";
         if (value > 800) {
-            kafkaTemplate.send("esp24_notifications",   g.toJson ("The firefighter " + id +
+            String text = "The firefighter " + id +
                                                         "is located in "+ localization + 
-                                                        "and has entered a very dangerous environment."));
+                                                        "and has entered a very dangerous environment.";
+            tempmessage = g.toJson("{\"text\": " + text + "}");
+            kafkaTemplate.send("esp24_notifications",       g.toJson(text));
+            log.info(g.toJson(text));
 
         } else if (value > 250) {
-            kafkaTemplate.send("esp24_notifications",   g.toJson("The firefighter " + id +
-                                                        "is located in "+ localization + 
-                                                        "and has entered a dangerous environment."));
+            String text = "The firefighter " + id + "is located in "+ localization + "and has entered a dangerous environment.";
+            //JSONObject jsonObject = new JSONObject();
+            //try {
+            //    jsonObject.put("text", text);
+            //} catch (JSONException ex) {
+            //    Logger.getLogger(SensorProcessService.class.getName()).log(Level.SEVERE, null, ex);
+            //}
+            //String payload = jsonObject.toString();
+            kafkaTemplate.send("esp24_notifications",       g.toJson(text));
+            log.info(g.toJson(text));
         } 
-        //log.info(localization + " id: " + id);
     }
 
     @KafkaListener(topics = "esp24_heartRate", groupId = "SensorProcessing", containerFactory = "SensorProcessingKafkaListenerContainerFactory")
@@ -91,12 +103,21 @@ public class SensorProcessService {
 
         String localization = getLocation(id);
         
-     if (value < 60 | value > 150) {
-        kafkaTemplate.send("esp24_notifications",       g.toJson("The firefighter " + id +
+        String tempmessage="";
+        if (value < 60 | value > 150) {
+            String text = "The firefighter " + id +
                                                         "is located in "+ localization + 
-                                                        "and is probably injured or unconscious."));
+                                                        "and is probably injured or unconscious.";
+            //JSONObject jsonObject = new JSONObject();
+            //try {
+            //    jsonObject.put("text", text);
+            //} catch (JSONException ex) {
+            //    Logger.getLogger(SensorProcessService.class.getName()).log(Level.SEVERE, null, ex);
+            //}
+            //String payload = jsonObject.toString();
+            kafkaTemplate.send("esp24_notifications",       g.toJson(text));
+            log.info(g.toJson(text));
         } 
-        //log.info(localization + " id: " + id);
     }
     
     @KafkaListener(topics = "esp24_battery", groupId = "SensorProcessing", containerFactory = "SensorProcessingKafkaListenerContainerFactory")
@@ -109,12 +130,21 @@ public class SensorProcessService {
 
         String localization = getLocation(id);
         
+        String tempmessage="";
         if (value <= 1) {
-        kafkaTemplate.send("esp24_notifications",       g.toJson("Contact lost with the firefighter " + id +
+            String text = "Contact lost with the firefighter " + id +
                                                         ", whose last location received was " + localization + 
-                                                        ", replacement battery needed."));
+                                                        ", replacement battery needed.";
+            //JSONObject jsonObject = new JSONObject();
+            //try {
+            //    jsonObject.put("text", text);
+            //} catch (JSONException ex) {
+            //    Logger.getLogger(SensorProcessService.class.getName()).log(Level.SEVERE, null, ex);
+            //}
+            //String payload = jsonObject.toString();
+            kafkaTemplate.send("esp24_notifications",       g.toJson(text));
+            log.info(g.toJson(text));
         }
-        //log.info(localization + " id: " + id);
     }
     
     @KafkaListener(topics = "esp24_temperature", groupId = "SensorProcessing", containerFactory = "SensorProcessingKafkaListenerContainerFactory")
