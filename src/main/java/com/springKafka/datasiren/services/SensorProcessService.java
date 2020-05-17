@@ -1,6 +1,6 @@
 package com.springKafka.datasiren.services;
 
-import java.util.Arrays;
+import com.google.gson.Gson;
 import java.util.HashMap;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 public class SensorProcessService {
 
     HashMap <Integer,double[]> localizations = new HashMap <>();
+    
+    Gson g = new Gson();
     
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
@@ -47,9 +49,12 @@ public class SensorProcessService {
             localization[k-1]= Double.parseDouble(tmp[k]);
         }        
         
-        localizations.put(id, localization);
-        
-        log.info(Arrays.toString(localization));
+        if(localizations.containsKey(id)){
+            localizations.replace(id, localization);
+        }else{
+            localizations.put(id, localization);
+        }
+        //log.info(Arrays.toString(localization));
 
     }
 
@@ -64,19 +69,19 @@ public class SensorProcessService {
         String localization = getLocation(id);
         
         if (value > 800) {
-            kafkaTemplate.send("esp24_notifications",   "The firefighter " + id +
+            kafkaTemplate.send("esp24_notifications",   g.toJson ("The firefighter " + id +
                                                         "is located in "+ localization + 
-                                                        "and has entered a very dangerous environment.");
+                                                        "and has entered a very dangerous environment."));
 
         } else if (value > 250) {
-            kafkaTemplate.send("esp24_notifications",   "The firefighter " + id +
+            kafkaTemplate.send("esp24_notifications",   g.toJson("The firefighter " + id +
                                                         "is located in "+ localization + 
-                                                        "and has entered a dangerous environment.");
+                                                        "and has entered a dangerous environment."));
         } 
-        log.info(localization + " id: " + id);
+        //log.info(localization + " id: " + id);
     }
 
-        @KafkaListener(topics = "esp24_heartRate", groupId = "SensorProcessing", containerFactory = "SensorProcessingKafkaListenerContainerFactory")
+    @KafkaListener(topics = "esp24_heartRate", groupId = "SensorProcessing", containerFactory = "SensorProcessingKafkaListenerContainerFactory")
     public void HeartRateProcess(@Payload String message) {
        
         String[] tmp = message.split(" ");
@@ -87,15 +92,15 @@ public class SensorProcessService {
         String localization = getLocation(id);
         
      if (value < 60 | value > 150) {
-        kafkaTemplate.send("esp24_notifications",       "The firefighter " + id +
+        kafkaTemplate.send("esp24_notifications",       g.toJson("The firefighter " + id +
                                                         "is located in "+ localization + 
-                                                        "and is probably injured or unconscious.");
+                                                        "and is probably injured or unconscious."));
         } 
-        log.info(localization + " id: " + id);
+        //log.info(localization + " id: " + id);
     }
     
     @KafkaListener(topics = "esp24_battery", groupId = "SensorProcessing", containerFactory = "SensorProcessingKafkaListenerContainerFactory")
-    public void listen(@Payload String message) {
+    public void BatteryProcess(@Payload String message) {
 
         String[] tmp = message.split(" ");
 
@@ -105,11 +110,11 @@ public class SensorProcessService {
         String localization = getLocation(id);
         
         if (value <= 1) {
-        kafkaTemplate.send("esp24_notifications",       "Contact lost with the firefighter " + id +
+        kafkaTemplate.send("esp24_notifications",       g.toJson("Contact lost with the firefighter " + id +
                                                         ", whose last location received was " + localization + 
-                                                        ", replacement battery needed.");
+                                                        ", replacement battery needed."));
         }
-        log.info(localization + " id: " + id);
+        //log.info(localization + " id: " + id);
     }
     
     @KafkaListener(topics = "esp24_temperature", groupId = "SensorProcessing", containerFactory = "SensorProcessingKafkaListenerContainerFactory")
