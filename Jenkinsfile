@@ -15,17 +15,8 @@ pipeline {
                     sh 'echo "trying to build"'
                     sh 'cp /root/settings.xml /root/.m2/settings.xml'
                     sh 'ls -la /root/.m2'
-                    sh 'mvn -Dskiptests package'
+                    sh 'mvn -DskipTests package'
                     sh 'ls -la target'
-                }
-            }
-            stage('Test stage'){
-                when{
-                    branch 'testing'
-                }
-                steps{
-                    sh 'echo "running tests"'
-                    sh 'mvn test'
                 }
             }
 
@@ -42,7 +33,7 @@ pipeline {
                     sh 'ls -la'
                     sh 'cat pom.xml'
                     sh 'cat /root/.m2/settings.xml'
-                    sh 'mvn deploy'
+                    sh 'mvn -DskipTests deploy'
                 }
             }
             stage('Cleanup stage'){
@@ -82,6 +73,21 @@ pipeline {
                         sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 docker pull 192.168.160.99:5000/esp24-datasiren"
                         sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 docker run -d -p 24010:8080 -p 24848:4848 --name esp24-datasiren 192.168.160.99:5000/esp24-datasiren"
                     }
+                }
+            }
+
+            stage('Test stage'){
+                when{
+                    branch 'testing'
+                }
+                steps{
+                    sh 'echo "running tests"'
+                    sleep 90
+                    sh 'mvn test'
+                    
+                    //sshagent(credentials: ['esp24']){
+                    //    sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 docker stop esp24-datasiren || true"
+                    //}
                 }
             }
 	}
