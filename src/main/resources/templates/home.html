@@ -105,18 +105,18 @@
           for (var i = 0; i < 4; i++) {
             coords = [myObj[i].lat, myObj[i].long];
             animatedMove(markers[i], .5, markers[i], coords, i);
-            updateValues(windowClicked, id);
+            updateValues(windowClicked, i);
             updateDistances(windowClicked);
           }
 
           //// Update Values Function
           function updateValues(window, id) {
-            dataValues[0][i] = myObj[i].hr;
-            dataValues[1][i] = myObj[i].alt;
-            dataValues[2][i] = myObj[i].co;
-            dataValues[3][i] = myObj[i].temp;
-            dataValues[4][i] = myObj[i].hum;
-            dataValues[5][i] = myObj[i].bat;
+            dataValues[0][id] = myObj[id].hr;
+            dataValues[1][id] = myObj[id].alt;
+            dataValues[2][id] = myObj[id].co;
+            dataValues[3][id] = myObj[id].temp;
+            dataValues[4][id] = myObj[id].hum;
+            dataValues[5][id] = myObj[id].bat;
             $('#altitude').text(dataValues[1][window]);
             $('#colevel').text(dataValues[2][window]);
             $('#temperature').text(dataValues[3][window]);
