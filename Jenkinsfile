@@ -33,7 +33,7 @@ pipeline {
                     sh 'ls -la'
                     sh 'cat pom.xml'
                     sh 'cat /root/.m2/settings.xml'
-                    sh 'mvn deploy'
+                    sh 'mvn -DskipTests deploy'
                 }
             }
             stage('Cleanup stage'){
