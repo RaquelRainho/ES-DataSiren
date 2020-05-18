@@ -46,6 +46,11 @@ public class KafkaConsumerConfig {
     }
     
     @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, String> UpdateWebKafkaListenerContainerFactory() {
+        return kafkaListenerContainerFactory("UpdateWeb");
+    }
+    
+    @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
         return kafkaListenerContainerFactory("esp24_AllSensorData");
     }
