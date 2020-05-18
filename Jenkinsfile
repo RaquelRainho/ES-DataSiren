@@ -85,7 +85,7 @@ pipeline {
                     //    sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 wget --retry-connrefused --tries=120 --waitretry=1 -q http://192.168.160.103:24010/datasiren-0.0.4/home"
                     //}
                     sh 'echo "running tests"'
-                    sleep 30
+                    sleep 90
                     sh 'mvn test'
                     
                     sshagent(credentials: ['esp24']){
