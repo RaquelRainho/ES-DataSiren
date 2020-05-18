@@ -82,15 +82,7 @@ pipeline {
                 }
                 steps{
                     sshagent(credentials: ['esp24']){
-                        timeout(120){
-                            waitUntil{
-                                script{
-                                    def r = sh script: "wget --retry-connrefused --tries=120 --waitretry=1 -q http://192.168.160.103:24010/datasiren-0.0.4/home", returnStdout:true
-                                    return (r==0);
-
-                                }
-                            }
-                        }
+                        sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 wget --retry-connrefused --tries=120 --waitretry=1 -q http://192.168.160.103:24010/datasiren-0.0.4/home"
                     }
                     sh 'echo "running tests"'
                     sh 'mvn test'
