@@ -81,6 +81,18 @@ pipeline {
                     branch 'testing'
                 }
                 steps{
+                    timeout(120){
+                        waitUntil{
+                            try{
+                                sshagent(credentials: ['esp24']){
+                                    sh "wget -q http://192.168.160.103:24010/datasiren-0.0.4/home"
+                                    return true
+                                }
+                            }catch(exception){
+                                return false
+                            }
+                        }
+                    }
                     sh 'echo "running tests"'
                     sh 'mvn test'
                     
