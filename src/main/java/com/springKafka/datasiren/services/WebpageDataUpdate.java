@@ -222,9 +222,9 @@ public class WebpageDataUpdate {
         String newmessage = prettyPrintJsonString(actualObj);
         template.convertAndSend("/topic/esp24-data", newmessage);
         
-        //log.info(message);
-        //log.info(String.valueOf(id));
-        //log.info(messag);
+        log.info(message);
+        log.info(String.valueOf(id));
+        log.info(messag);
 
     }
 

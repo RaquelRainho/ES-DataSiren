@@ -3,10 +3,6 @@ package com.springKafka.datasiren.services;
 import com.google.gson.Gson;
 import com.springKafka.datasiren.model.Firefighter;
 import com.springKafka.datasiren.model.FirefightersGroup;
-
-import java.util.Iterator;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -31,9 +27,8 @@ public class KafkaConsumerService {
         Gson g = new Gson();
         FirefightersGroup p = g.fromJson(message, FirefightersGroup.class);
         int id = 0;
-        Iterator<Firefighter> iter = p.getFirefighters().iterator();
-        while(iter.hasNext()){
-        	Firefighter f  = iter.next();
+        
+        for (Firefighter f : p.getFirefighters()) {
             kafkaTemplate.send("esp24_GPS"          ,   id + " " + f.getLat() + " " + f.getLongi() + " " + f.getAlt());
             kafkaTemplate.send("esp24_CO"           ,   id + " " + f.getCO());
             kafkaTemplate.send("esp24_heartRate"    ,   id + " " + f.getHr());
