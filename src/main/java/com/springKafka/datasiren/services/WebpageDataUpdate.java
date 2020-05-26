@@ -49,21 +49,22 @@ public class WebpageDataUpdate {
             firefighter.setLat(localization[0]);
             firefighter.setLongi(localization[1]);
             firefighter.setAlt(localization[2]);
+            firefighter.setId(id);
             firefighters.put(id, firefighter);
         }
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode actualObj = mapper.valueToTree(firefighters.values().toArray());
         ObjectNode outerObject = mapper.createObjectNode();
-                ArrayNode outerArray = mapper.createArrayNode(); 
+        ArrayNode outerArray = mapper.createArrayNode();
 
         outerObject.putPOJO("Firefighters", actualObj);
-        outerObject.putPOJO("alerts",outerArray);
+        outerObject.putPOJO("alerts", outerArray);
 
         String newmessage = prettyPrintJsonString(outerObject);
         template.convertAndSend("/topic/esp24-data", newmessage);
-
-        log.info(newmessage);
+        
+        //log.info(newmessage);
     }
 
     @KafkaListener(topics = "esp24_CO", groupId = "UpdateWeb", containerFactory = "UpdateWebKafkaListenerContainerFactory")
@@ -82,20 +83,21 @@ public class WebpageDataUpdate {
         } else {
             firefighter = new Firefighter();
             firefighter.setCO(value);
+            firefighter.setId(id);
             firefighters.put(id, firefighter);
         }
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode actualObj = mapper.valueToTree(firefighters.values().toArray());
         ObjectNode outerObject = mapper.createObjectNode();
-                ArrayNode outerArray = mapper.createArrayNode(); 
+        ArrayNode outerArray = mapper.createArrayNode();
 
         outerObject.putPOJO("Firefighters", actualObj);
-        outerObject.putPOJO("alerts",outerArray);
+        outerObject.putPOJO("alerts", outerArray);
 
         String newmessage = prettyPrintJsonString(outerObject);
         template.convertAndSend("/topic/esp24-data", newmessage);
-        log.info(newmessage);
+        //log.info(newmessage);
 
     }
 
@@ -115,21 +117,21 @@ public class WebpageDataUpdate {
         } else {
             firefighter = new Firefighter();
             firefighter.setHr(value);
+            firefighter.setId(id);
             firefighters.put(id, firefighter);
         }
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode actualObj = mapper.valueToTree(firefighters.values().toArray());
         ObjectNode outerObject = mapper.createObjectNode();
-                ArrayNode outerArray = mapper.createArrayNode(); 
+        ArrayNode outerArray = mapper.createArrayNode();
 
         outerObject.putPOJO("Firefighters", actualObj);
-        outerObject.putPOJO("alerts",outerArray);
+        outerObject.putPOJO("alerts", outerArray);
 
         String newmessage = prettyPrintJsonString(outerObject);
         template.convertAndSend("/topic/esp24-data", newmessage);
-                log.info(newmessage);
-
+        //log.info(newmessage);
     }
 
     @KafkaListener(topics = "esp24_battery", groupId = "UpdateWeb", containerFactory = "UpdateWebKafkaListenerContainerFactory")
@@ -148,21 +150,21 @@ public class WebpageDataUpdate {
         } else {
             firefighter = new Firefighter();
             firefighter.setBat(value);
+            firefighter.setId(id);
             firefighters.put(id, firefighter);
         }
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode actualObj = mapper.valueToTree(firefighters.values().toArray());
         ObjectNode outerObject = mapper.createObjectNode();
-                ArrayNode outerArray = mapper.createArrayNode(); 
+        ArrayNode outerArray = mapper.createArrayNode();
 
         outerObject.putPOJO("Firefighters", actualObj);
-        outerObject.putPOJO("alerts",outerArray);
+        outerObject.putPOJO("alerts", outerArray);
 
         String newmessage = prettyPrintJsonString(outerObject);
         template.convertAndSend("/topic/esp24-data", newmessage);
-                log.info(newmessage);
-
+        //log.info(newmessage);
     }
 
     @KafkaListener(topics = "esp24_temperature", groupId = "UpdateWeb", containerFactory = "UpdateWebKafkaListenerContainerFactory")
@@ -181,21 +183,22 @@ public class WebpageDataUpdate {
         } else {
             firefighter = new Firefighter();
             firefighter.setTemp(value);
+            firefighter.setId(id);
+
             firefighters.put(id, firefighter);
         }
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode actualObj = mapper.valueToTree(firefighters.values().toArray());
         ObjectNode outerObject = mapper.createObjectNode();
-                ArrayNode outerArray = mapper.createArrayNode(); 
+        ArrayNode outerArray = mapper.createArrayNode();
 
         outerObject.putPOJO("Firefighters", actualObj);
-        outerObject.putPOJO("alerts",outerArray);
+        outerObject.putPOJO("alerts", outerArray);
 
         String newmessage = prettyPrintJsonString(outerObject);
         template.convertAndSend("/topic/esp24-data", newmessage);
-                log.info(newmessage);
-
+        //log.info(newmessage);
     }
 
     @KafkaListener(topics = "esp24_humidity", groupId = "UpdateWeb", containerFactory = "UpdateWebKafkaListenerContainerFactory")
@@ -214,22 +217,23 @@ public class WebpageDataUpdate {
         } else {
             firefighter = new Firefighter();
             firefighter.setHum(value);
+            firefighter.setId(id);
+
             firefighters.put(id, firefighter);
         }
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode actualObj = mapper.valueToTree(firefighters.values().toArray());
 
-                ArrayNode outerArray = mapper.createArrayNode(); 
+        ArrayNode outerArray = mapper.createArrayNode();
 
         ObjectNode outerObject = mapper.createObjectNode();
         outerObject.putPOJO("Firefighters", actualObj);
-        outerObject.putPOJO("alerts",outerArray);
+        outerObject.putPOJO("alerts", outerArray);
 
         String newmessage = prettyPrintJsonString(outerObject);
         template.convertAndSend("/topic/esp24-data", newmessage);
-                        log.info(newmessage);
-
+        //log.info(newmessage);
     }
 
     @KafkaListener(topics = "esp24_notifications", groupId = "UpdateWeb", containerFactory = "UpdateWebKafkaListenerContainerFactory")
@@ -245,13 +249,12 @@ public class WebpageDataUpdate {
         JsonNode actualObj = mapper.valueToTree(firefighters.values().toArray());
 
         //log.info(actualObj.toString());
-        
         ObjectNode outerObject1 = mapper.createObjectNode();
         outerObject1.put("id", "" + id).put("alert", messag);
-        
-        ArrayNode outerArray = mapper.createArrayNode(); 
+
+        ArrayNode outerArray = mapper.createArrayNode();
         outerArray.add(outerObject1);
-                
+
         ObjectNode outerObject = mapper.createObjectNode();
         outerObject.putPOJO("Firefighters", actualObj);
         outerObject.putPOJO("alerts", outerArray);
@@ -259,8 +262,8 @@ public class WebpageDataUpdate {
         //log.info(outerObject.toString());
         String newmessage = prettyPrintJsonString(outerObject);
         template.convertAndSend("/topic/esp24-data", newmessage);
-                        log.info(newmessage);
-
+        
+        log.info(newmessage);
 
     }
 

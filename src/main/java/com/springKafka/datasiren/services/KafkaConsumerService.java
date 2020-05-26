@@ -21,7 +21,7 @@ public class KafkaConsumerService {
     @Autowired
     SimpMessagingTemplate template;
 
-    @KafkaListener(topics = "${kafka.topic}", containerFactory = "kafkaListenerContainerFactory")
+    @KafkaListener(topics = "${kafka.topic}", groupId = "esp24_AllSensorData", containerFactory = "kafkaListenerContainerFactory")
     public void consume(@Payload String message) {
 
         Gson g = new Gson();
