@@ -43,20 +43,6 @@ public class KafkaConsumerService {
             id++;
 
         }
-        template.convertAndSend("/topic/esp24-data", message);
-
-        //log.info(message);
         //log.info(p.toString());
     }
-
-    public boolean isNumeric(String str) {
-        try {
-            @SuppressWarnings("unused")
-            double d = Double.parseDouble(str);
-        } catch (NumberFormatException nfe) {
-            return false;
-        }
-        return true;
-    }
-
 }
