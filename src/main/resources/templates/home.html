@@ -111,7 +111,7 @@
 
           // Update Markers and Environment
           for (var i = 0; i < 4; i++) {
-            coords = [myObj[i].lat, myObj[i].long];
+            coords = [myObj.firefighters[i].lat, myObj.firefighters[i].long];
             animatedMove(markers[i], .5, markers[i], coords, i);
             updateValues(windowClicked, i);
             updateDistances(windowClicked);
@@ -119,12 +119,12 @@
 
           //// Update Values Function
           function updateValues(window, id) {
-            dataValues[0][id] = myObj[id].hr;
-            dataValues[1][id] = myObj[id].alt;
-            dataValues[2][id] = myObj[id].co;
-            dataValues[3][id] = myObj[id].temp;
-            dataValues[4][id] = myObj[id].hum;
-            dataValues[5][id] = myObj[id].bat;
+            dataValues[0][id] = myObj.firefighters[id].hr;
+            dataValues[1][id] = myObj.firefighters[id].alt;
+            dataValues[2][id] = myObj.firefighters[id].co;
+            dataValues[3][id] = myObj.firefighters[id].temp;
+            dataValues[4][id] = myObj.firefighters[id].hum;
+            dataValues[5][id] = myObj.firefighters[id].bat;
             $('#altitude').text(dataValues[1][window]);
             $('#colevel').text(dataValues[2][window]);
             $('#temperature').text(dataValues[3][window]);
@@ -138,8 +138,8 @@
             var distances = {};
             for (var i = 0; i < coordsstart.length; i++) {
               if (i != id) {
-                console.log(myObj[id].lat+"," + myObj[id].long+"," + myObj[i].lat+"," + myObj[i].long);
-                var dist = calcCrow(myObj[id].lat, myObj[id].long, myObj[i].lat, myObj[i].long).toFixed(3);
+                console.log(myObj.firefighters[id].lat+"," + myObj.firefighters[id].long+"," + myObj.firefighters[i].lat+"," + myObj.firefighters[i].long);
+                var dist = calcCrow(myObj.firefighters[id].lat, myObj.firefighters[id].long, myObj.firefighters[i].lat, myObj.firefighters[i].long).toFixed(3);
                 distances[i] = dist;
               }
             }
