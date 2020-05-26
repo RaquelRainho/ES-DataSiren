@@ -105,7 +105,7 @@
         stompClient.subscribe('/topic/esp24-data', function (location) {
           var myJSON = location.body;
           var myObj = JSON.parse(myJSON);
-          console.log('JSON -------  ' + myObj);
+          console.log('JSON -------  ' + JSON.stringify(myObj));
           // Send Alert
           myObj.alerts.forEach(alertNotification);
 

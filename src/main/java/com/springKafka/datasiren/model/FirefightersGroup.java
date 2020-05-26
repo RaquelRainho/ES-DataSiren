@@ -14,4 +14,9 @@ public class FirefightersGroup implements Serializable{
 
     private List<Firefighter> firefighters;
 
+	public List<Firefighter> getFirefighters() {
+		
+		return firefighters;
+	}
+
 }
