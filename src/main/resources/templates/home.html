@@ -91,6 +91,22 @@
         [21, 23, 22],
         [80, 34, 5]
       ];
+      firefightersData = [{
+                name: "Teresa Carmo",
+                image: "images/Teresa.png",
+                id: "109C"
+              },
+              {
+                name: "Zé Manuel",
+                image: "images/Ze.png",
+                id: "146B"
+              },
+              {
+                name: "João Lima",
+                image: "images/Joao.png",
+                id: "301A"
+              }
+            ];
     
 
       // Create Markers
@@ -111,7 +127,7 @@
 
           // Update Markers and Environment
           for (var i = 0; i < 4; i++) {
-            coords = [myObj.firefighters[i].lat, myObj.firefighters[i].long];
+            coords = [myObj.Firefighters[i].lat, myObj.Firefighters[i].long];
             animatedMove(markers[i], .5, markers[i], coords, i);
             updateValues(windowClicked, i);
             updateDistances(windowClicked);
@@ -119,12 +135,12 @@
 
           //// Update Values Function
           function updateValues(window, id) {
-            dataValues[0][id] = myObj.firefighters[id].hr;
-            dataValues[1][id] = myObj.firefighters[id].alt;
-            dataValues[2][id] = myObj.firefighters[id].co;
-            dataValues[3][id] = myObj.firefighters[id].temp;
-            dataValues[4][id] = myObj.firefighters[id].hum;
-            dataValues[5][id] = myObj.firefighters[id].bat;
+            dataValues[0][id] = myObj.Firefighters[id].hr;
+            dataValues[1][id] = myObj.Firefighters[id].alt;
+            dataValues[2][id] = myObj.Firefighters[id].co;
+            dataValues[3][id] = myObj.Firefighters[id].temp;
+            dataValues[4][id] = myObj.Firefighters[id].hum;
+            dataValues[5][id] = myObj.Firefighters[id].bat;
             $('#altitude').text(dataValues[1][window]);
             $('#colevel').text(dataValues[2][window]);
             $('#temperature').text(dataValues[3][window]);
@@ -138,8 +154,8 @@
             var distances = {};
             for (var i = 0; i < coordsstart.length; i++) {
               if (i != id) {
-                console.log(myObj.firefighters[id].lat+"," + myObj.firefighters[id].long+"," + myObj.firefighters[i].lat+"," + myObj.firefighters[i].long);
-                var dist = calcCrow(myObj.firefighters[id].lat, myObj.firefighters[id].long, myObj.firefighters[i].lat, myObj.firefighters[i].long).toFixed(3);
+                console.log(myObj.Firefighters[id].lat+"," + myObj.Firefighters[id].long+"," + myObj.Firefighters[i].lat+"," + myObj.Firefighters[i].long);
+                var dist = calcCrow(myObj.Firefighters[id].lat, myObj.Firefighters[id].long, myObj.Firefighters[i].lat, myObj.Firefighters[i].long).toFixed(3);
                 distances[i] = dist;
               }
             }
@@ -843,22 +859,7 @@
 
 
             info_windows.push(infoWindow);
-            var firefightersData = [{
-                name: "Teresa Carmo",
-                image: "images/Teresa.png",
-                id: "109C"
-              },
-              {
-                name: "Zé Manuel",
-                image: "images/Ze.png",
-                id: "146B"
-              },
-              {
-                name: "João Lima",
-                image: "images/Joao.png",
-                id: "301A"
-              }
-            ]
+            
 
             marker.addListener('mouseover', function (event) {
               for (var j = 0; j < info_windows.length; j++) {
