@@ -1,6 +1,7 @@
 package com.springKafka.datasiren.configurations;
 
 import com.springKafka.datasiren.model.Notification;
+import com.springKafka.datasiren.model.Sensor;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -21,6 +22,7 @@ public class KafkaConsumerConfig {
     @Value("${kafka.bootstrapserver}")
     private String bootstrapServer;
 
+    //Generic
     public ConsumerFactory<String, String> consumerFactory(String groupId) {
         Map<String, Object> confprops = new HashMap<>();
         confprops.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
@@ -53,6 +55,7 @@ public class KafkaConsumerConfig {
         return kafkaListenerContainerFactory("esp24_AllSensorData");
     }
 
+    //Notifications
     public ConsumerFactory<String, Notification> notificationConsumerFactory(String groupId) {
         Map<String, Object> confprops = new HashMap<>();
         confprops.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
@@ -71,5 +74,31 @@ public class KafkaConsumerConfig {
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, Notification> notificationkafkaListenerContainerFactory() {
         return notificationKafkaListenerContainerFactory("UpdateWeb");
+    }
+
+    //Sensors
+    public ConsumerFactory<String, Sensor> sensorConsumerFactory(String groupId) {
+        Map<String, Object> confprops = new HashMap<>();
+        confprops.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
+        confprops.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        confprops.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+
+        return new DefaultKafkaConsumerFactory<>(confprops, new StringDeserializer(), new JsonDeserializer<>(Sensor.class));
+    }
+
+    public ConcurrentKafkaListenerContainerFactory<String, Sensor> sensorKafkaListenerContainerFactory(String groupId) {
+        ConcurrentKafkaListenerContainerFactory<String, Sensor> factory = new ConcurrentKafkaListenerContainerFactory();
+        factory.setConsumerFactory(sensorConsumerFactory(groupId));
+        return factory;
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, Sensor> sensorkafkaListenerContainerFactory() {
+        return sensorKafkaListenerContainerFactory("UpdateWeb");
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, Sensor> sensorProcessingKafkaListenerContainerFactory() {
+        return sensorKafkaListenerContainerFactory("SensorProcessing");
     }
 }

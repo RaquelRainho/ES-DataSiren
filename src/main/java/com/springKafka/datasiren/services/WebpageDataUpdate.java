@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.springKafka.datasiren.model.Firefighter;
 import com.springKafka.datasiren.model.Notification;
+import com.springKafka.datasiren.model.Sensor;
 import java.util.HashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,14 +59,15 @@ public class WebpageDataUpdate {
         //log.info(message);
     }
 
-    @KafkaListener(topics = "esp24_CO", groupId = "UpdateWeb", containerFactory = "UpdateWebKafkaListenerContainerFactory")
-    public void COWeb(@Payload String message) {
+    @KafkaListener(topics = "esp24_CO_v2", groupId = "UpdateWeb", containerFactory = "sensorkafkaListenerContainerFactory")
+    public void COWeb(@Payload Sensor data) {
 
-        String[] tmp = message.split(" ");
+        // Read CO data
+        int id = data.getId();
+        int value = (int) data.getValue();
+
+        // Update firefighter data
         Firefighter firefighter;
-
-        int id = Integer.parseInt(tmp[0]);
-        int value = Integer.parseInt(tmp[1]);
 
         if (firefighters.containsKey(id)) {
             firefighter = firefighters.get(id);
@@ -77,17 +79,17 @@ public class WebpageDataUpdate {
             firefighter.setId(id);
             firefighters.put(id, firefighter);
         }
-        //log.info(message);
     }
 
-    @KafkaListener(topics = "esp24_heartRate", groupId = "UpdateWeb", containerFactory = "UpdateWebKafkaListenerContainerFactory")
-    public void HeartRateWeb(@Payload String message) {
+    @KafkaListener(topics = "esp24_heartRate_v2", groupId = "UpdateWeb", containerFactory = "sensorkafkaListenerContainerFactory")
+    public void HeartRateWeb(@Payload Sensor data) {
 
-        String[] tmp = message.split(" ");
+        // Read heart rate data
+        int id = data.getId();
+        double value = data.getValue();
+
+        // Update firefighter data
         Firefighter firefighter;
-
-        int id = Integer.parseInt(tmp[0]);
-        double value = Double.parseDouble(tmp[1]);
 
         if (firefighters.containsKey(id)) {
             firefighter = firefighters.get(id);
@@ -99,17 +101,17 @@ public class WebpageDataUpdate {
             firefighter.setId(id);
             firefighters.put(id, firefighter);
         }
-        //log.info(message);
     }
 
-    @KafkaListener(topics = "esp24_battery", groupId = "UpdateWeb", containerFactory = "UpdateWebKafkaListenerContainerFactory")
-    public void BatteryWeb(@Payload String message) {
+    @KafkaListener(topics = "esp24_battery_v2", groupId = "UpdateWeb", containerFactory = "sensorkafkaListenerContainerFactory")
+    public void BatteryWeb(@Payload Sensor data) {
 
-        String[] tmp = message.split(" ");
+        // Read battery data
+        int id = data.getId();
+        int value = (int) data.getValue();
+
+        // Update firefighter data
         Firefighter firefighter;
-
-        int id = Integer.parseInt(tmp[0]);
-        int value = Integer.parseInt(tmp[1]);
 
         if (firefighters.containsKey(id)) {
             firefighter = firefighters.get(id);
@@ -121,17 +123,17 @@ public class WebpageDataUpdate {
             firefighter.setId(id);
             firefighters.put(id, firefighter);
         }
-        //log.info(message);
     }
 
-    @KafkaListener(topics = "esp24_temperature", groupId = "UpdateWeb", containerFactory = "UpdateWebKafkaListenerContainerFactory")
-    public void TemperatureWeb(@Payload String message) {
+    @KafkaListener(topics = "esp24_temperature_v2", groupId = "UpdateWeb", containerFactory = "sensorkafkaListenerContainerFactory")
+    public void TemperatureWeb(@Payload Sensor data) {
 
-        String[] tmp = message.split(" ");
+         // Read temperature data
+        int id = data.getId();
+        int value = (int) data.getValue();
+
+        // Update firefighter data
         Firefighter firefighter;
-
-        int id = Integer.parseInt(tmp[0]);
-        int value = Integer.parseInt(tmp[1]);
 
         if (firefighters.containsKey(id)) {
             firefighter = firefighters.get(id);
@@ -144,17 +146,17 @@ public class WebpageDataUpdate {
 
             firefighters.put(id, firefighter);
         }
-        //log.info(message);
     }
 
-    @KafkaListener(topics = "esp24_humidity", groupId = "UpdateWeb", containerFactory = "UpdateWebKafkaListenerContainerFactory")
-    public void HumidityWeb(@Payload String message) {
+    @KafkaListener(topics = "esp24_humidity_v2", groupId = "UpdateWeb", containerFactory = "sensorkafkaListenerContainerFactory")
+    public void HumidityWeb(@Payload Sensor data) {
 
-        String[] tmp = message.split(" ");
+        // Read humidity data
+        int id = data.getId();
+        int value = (int) data.getValue();
+
+        // Update firefighter data
         Firefighter firefighter;
-
-        int id = Integer.parseInt(tmp[0]);
-        int value = Integer.parseInt(tmp[1]);
 
         if (firefighters.containsKey(id)) {
             firefighter = firefighters.get(id);
