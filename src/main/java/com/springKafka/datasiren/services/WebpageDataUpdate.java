@@ -34,10 +34,10 @@ public class WebpageDataUpdate {
     public void GPSWeb(@Payload Location data) {
 
         // Read CO data
-        int firefighterId = data.getId();
-        double latitude = data.getLat();
-        double longitude = data.getLonge();
-        double elevation = data.getAlt();
+        int firefighterId = data.getFirefighterID();
+        double latitude = data.getLatitude();
+        double longitude = data.getLongitude();
+        double elevation = data.getElevation();
 
         // Update firefighter data
         Firefighter firefighter;
@@ -62,7 +62,7 @@ public class WebpageDataUpdate {
     public void COWeb(@Payload Sensor data) {
 
         // Read CO data
-        int id = data.getId();
+        int id = data.getFirefighterID();
         int value = (int) data.getValue();
 
         // Update firefighter data
@@ -84,7 +84,7 @@ public class WebpageDataUpdate {
     public void HeartRateWeb(@Payload Sensor data) {
 
         // Read heart rate data
-        int id = data.getId();
+        int id = data.getFirefighterID();
         double value = data.getValue();
 
         // Update firefighter data
@@ -106,7 +106,7 @@ public class WebpageDataUpdate {
     public void BatteryWeb(@Payload Sensor data) {
 
         // Read battery data
-        int id = data.getId();
+        int id = data.getFirefighterID();
         int value = (int) data.getValue();
 
         // Update firefighter data
@@ -128,7 +128,7 @@ public class WebpageDataUpdate {
     public void TemperatureWeb(@Payload Sensor data) {
 
         // Read temperature data
-        int id = data.getId();
+        int id = data.getFirefighterID();
         int value = (int) data.getValue();
 
         // Update firefighter data
@@ -151,7 +151,7 @@ public class WebpageDataUpdate {
     public void HumidityWeb(@Payload Sensor data) {
 
         // Read humidity data
-        int id = data.getId();
+        int id = data.getFirefighterID();
         int value = (int) data.getValue();
 
         // Update firefighter data
@@ -174,7 +174,7 @@ public class WebpageDataUpdate {
     public void NotificationWeb(@Payload Notification data) {
 
         ObjectNode outerObject1 = mapper.createObjectNode();
-        outerObject1.put("id", data.getId()).put("alert", data.getMessage());
+        outerObject1.put("id", data.getFirefighterID()).put("alert", data.getMessage());
 
         outerArray.add(outerObject1);
     }

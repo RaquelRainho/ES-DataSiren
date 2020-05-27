@@ -16,9 +16,9 @@ import lombok.ToString;
 @ToString
 public class Notification implements Serializable{
     
-    private int id;
+    private int firefighterID;
     
-    private String name;
+    private String firefighterName;
     
     private String time;
     

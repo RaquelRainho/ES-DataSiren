@@ -27,19 +27,22 @@ public class SensorProcessService {
 
         switch (messageType) {
             case 0:
-                message = "The firefighter " + id + " is located in " + getLocation(id)
+                message = "The firefighter id=" + id +" ( " + getName(id) + " )" 
+                        + " is located in " + getLocation(id)
                         + " and has entered a dangerous environment.";
                 break;
             case 1:
-                message = "The firefighter " + id + " is located in " + getLocation(id)
+                message = "The firefighter id=" + id +" ( " + getName(id) + " )"
+                        + " is located in " + getLocation(id)
                         + " and has entered a very dangerous environment.";
                 break;
             case 2:
-                message = "The firefighter " + id + " is located in " + getLocation(id)
+                message = "The firefighter id=" + id +" ( " + getName(id) + " )"
+                        + " is located in " + getLocation(id)
                         + " and is probably injured or unconscious.";
                 break;
             case 3:
-                message = "Contact lost with the firefighter " + id
+                message = "Contact lost with the firefighter id=" + id +" ( " + getName(id) + " )"
                         + ", whose last location received was " + getLocation(id)
                         + ", replacement battery needed.";
                 break;
@@ -56,11 +59,11 @@ public class SensorProcessService {
         Location location = locations.get(id); 
         
         if (locations.containsKey(id)) {
-            return "( Latitude: "  + location.getLat() + " "
-                    + "Longitude: " + location.getLonge() + " "
-                    + "Elevation: " + location.getAlt() + ")";
+            return "( Latitude: "  + location.getLatitude()+ " "
+                    + "Longitude: " + location.getLongitude()+ " "
+                    + "Elevation: " + location.getElevation()+ " )";
         } else {
-            return "unavelable";
+            return "( unavelable )";
         }
     }
 
@@ -73,11 +76,28 @@ public class SensorProcessService {
         }
     }
 
+    @KafkaListener(topics = "esp24_firefightersNames", groupId = "SensorProcessing", containerFactory = "senskafkaListenerContainerFactory")
+    public void FirefightersNamesProcess(@Payload String message) {
+       
+        // Read name
+        String [] tmp = message.split(" ");
+        int id = Integer.parseInt(tmp[0]);
+        String name = tmp[1];
+        
+        // Save name 
+        if(names.containsKey(id)){
+            names.replace(id, name);
+        }
+        else{
+            names.put(id, name);
+        }
+    }
+    
     @KafkaListener(topics = "esp24_GPS_v2", groupId = "SensorProcessing", containerFactory = "locationProcessingKafkaListenerContainerFactory")
     public void GPSProcess(@Payload Location data) {
         
         // Read GPS data
-        int id = data.getId();
+        int id = data.getFirefighterID();
         
         // Save GPS data 
         if (locations.containsKey(id)) {
@@ -91,7 +111,7 @@ public class SensorProcessService {
     public void COProcess(@Payload Sensor data) {
 
         // Read CO data
-        int id = data.getId();
+        int id = data.getFirefighterID();
         double value = data.getValue();
         String time = data.getTime();
         String name = getName(id);
@@ -113,7 +133,7 @@ public class SensorProcessService {
     public void HeartRateProcess(@Payload Sensor data) {
 
         // Read heart rate data
-        int id = data.getId();
+        int id = data.getFirefighterID();
         double value = data.getValue();
         String time = data.getTime();
         String name = getName(id);
@@ -133,7 +153,7 @@ public class SensorProcessService {
     public void BatteryProcess(@Payload Sensor data) {
 
         // Read battery data
-        int id = data.getId();
+        int id = data.getFirefighterID();
         double value = data.getValue();
         String time = data.getTime();
         String name = getName(id);

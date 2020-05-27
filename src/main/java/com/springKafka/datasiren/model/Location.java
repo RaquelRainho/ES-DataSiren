@@ -16,14 +16,14 @@ import lombok.ToString;
 @ToString
 public class Location implements Serializable {
     
-    private int id;
+    private int firefighterID;
    
     private String time;
     
-    private double lat;
+    private double latitude;
     
-    private double longe;
+    private double longitude;
     
-    private double alt;
+    private double elevation;
 
 }

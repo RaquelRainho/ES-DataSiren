@@ -16,7 +16,11 @@ import lombok.ToString;
 @ToString
 public class Sensor implements Serializable {
     
+    private String name;
+    
     private int id;
+        
+    private int firefighterID;
    
     private String time;
     

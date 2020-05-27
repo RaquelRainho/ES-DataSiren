@@ -40,10 +40,15 @@ public class KafkaConsumerConfig {
         factory.setConsumerFactory(consumerFactory(groupId));
         return factory;
     }
-    
+
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
         return kafkaListenerContainerFactory("esp24_AllSensorData");
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, String> senskafkaListenerContainerFactory() {
+        return kafkaListenerContainerFactory("SensorProcessing");
     }
 
     //Notifications
@@ -94,7 +99,7 @@ public class KafkaConsumerConfig {
     }
 
     //Locations
-        public ConsumerFactory<String, Location> locationConsumerFactory(String groupId) {
+    public ConsumerFactory<String, Location> locationConsumerFactory(String groupId) {
         Map<String, Object> confprops = new HashMap<>();
         confprops.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
         confprops.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
