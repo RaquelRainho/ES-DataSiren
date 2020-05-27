@@ -1,5 +1,6 @@
 package com.springKafka.datasiren.services;
 
+import com.springKafka.datasiren.model.Location;
 import com.springKafka.datasiren.model.Notification;
 import com.springKafka.datasiren.model.Sensor;
 import java.util.HashMap;
@@ -17,7 +18,7 @@ public class SensorProcessService {
     @Autowired
     private KafkaTemplate<String, Notification> notificationKafkaTemplate;
 
-    private final HashMap<Integer, double[]> locations = new HashMap<>();
+    private final HashMap<Integer, Location> locations = new HashMap<>();
     private final HashMap<Integer, String> names = new HashMap<>();
 
     private String getMessage(int messageType, int id) {
@@ -51,22 +52,20 @@ public class SensorProcessService {
     }
 
     private String getLocation(int id) {
+        
+        Location location = locations.get(id); 
+        
         if (locations.containsKey(id)) {
-            double[] tmp1 = locations.get(id);
-            String location = "";
-
-            for (int k = 0; k < tmp1.length - 1; k++) {
-                location += String.valueOf(tmp1[k]) + " ";
-            }
-            
-            return location;
+            return "( Latitude: "  + location.getLat() + " "
+                    + "Longitude: " + location.getLonge() + " "
+                    + "Elevation: " + location.getAlt() + ")";
         } else {
             return "unavelable";
         }
     }
 
     private String getName(int id) {
-
+        
         if (names.containsKey(id)) {
             return names.get(id);
         } else {
@@ -74,23 +73,17 @@ public class SensorProcessService {
         }
     }
 
-    @KafkaListener(topics = "esp24_GPS", groupId = "SensorProcessing", containerFactory = "SensorProcessingKafkaListenerContainerFactory")
-    public void GPSProcess(@Payload String message) {
-
+    @KafkaListener(topics = "esp24_GPS_v2", groupId = "SensorProcessing", containerFactory = "locationProcessingKafkaListenerContainerFactory")
+    public void GPSProcess(@Payload Location data) {
+        
         // Read GPS data
-        String[] tmp = message.split(" ");
-        int id = Integer.parseInt(tmp[0]);
-        double[] location = new double[tmp.length - 1];
-
-        for (int k = 1; k < tmp.length - 1; k++) {
-            location[k - 1] = Double.parseDouble(tmp[k]);
-        }
-
+        int id = data.getId();
+        
         // Save GPS data 
         if (locations.containsKey(id)) {
-            locations.replace(id, location);
+            locations.replace(id, data);
         } else {
-            locations.put(id, location);
+            locations.put(id, data);
         }
     }
 

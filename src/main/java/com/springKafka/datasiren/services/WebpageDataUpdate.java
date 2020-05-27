@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.springKafka.datasiren.model.Firefighter;
+import com.springKafka.datasiren.model.Location;
 import com.springKafka.datasiren.model.Notification;
 import com.springKafka.datasiren.model.Sensor;
 import java.util.HashMap;
@@ -29,34 +30,32 @@ public class WebpageDataUpdate {
     private final ObjectMapper mapper = new ObjectMapper();
     private final ArrayNode outerArray = mapper.createArrayNode();
 
-    @KafkaListener(topics = "esp24_GPS", groupId = "UpdateWeb", containerFactory = "UpdateWebKafkaListenerContainerFactory")
-    public void GPSWeb(@Payload String message) {
+    @KafkaListener(topics = "esp24_GPS_v2", groupId = "UpdateWeb", containerFactory = "locationkafkaListenerContainerFactory")
+    public void GPSWeb(@Payload Location data) {
 
-        String[] tmp = message.split(" ");
+        // Read CO data
+        int firefighterId = data.getId();
+        double latitude = data.getLat();
+        double longitude = data.getLonge();
+        double elevation = data.getAlt();
+
+        // Update firefighter data
         Firefighter firefighter;
 
-        int id = Integer.parseInt(tmp[0]);
-        double[] localization = new double[tmp.length - 1];
-
-        for (int k = 1; k < tmp.length - 1; k++) {
-            localization[k - 1] = Double.parseDouble(tmp[k]);
-        }
-
-        if (firefighters.containsKey(id)) {
-            firefighter = firefighters.get(id);
-            firefighter.setLat(localization[0]);
-            firefighter.setLongi(localization[1]);
-            firefighter.setAlt(localization[2]);
-            firefighters.replace(id, firefighter);
+        if (firefighters.containsKey(firefighterId)) {
+            firefighter = firefighters.get(firefighterId);
+            firefighter.setLat(latitude);
+            firefighter.setLongi(longitude);
+            firefighter.setAlt(elevation);
+            firefighters.replace(firefighterId, firefighter);
         } else {
             firefighter = new Firefighter();
-            firefighter.setLat(localization[0]);
-            firefighter.setLongi(localization[1]);
-            firefighter.setAlt(localization[2]);
-            firefighter.setId(id);
-            firefighters.put(id, firefighter);
+            firefighter.setLat(latitude);
+            firefighter.setLongi(longitude);
+            firefighter.setAlt(elevation);
+            firefighter.setId(firefighterId);
+            firefighters.put(firefighterId, firefighter);
         }
-        //log.info(message);
     }
 
     @KafkaListener(topics = "esp24_CO_v2", groupId = "UpdateWeb", containerFactory = "sensorkafkaListenerContainerFactory")
@@ -128,7 +127,7 @@ public class WebpageDataUpdate {
     @KafkaListener(topics = "esp24_temperature_v2", groupId = "UpdateWeb", containerFactory = "sensorkafkaListenerContainerFactory")
     public void TemperatureWeb(@Payload Sensor data) {
 
-         // Read temperature data
+        // Read temperature data
         int id = data.getId();
         int value = (int) data.getValue();
 
@@ -169,7 +168,6 @@ public class WebpageDataUpdate {
 
             firefighters.put(id, firefighter);
         }
-        //log.info(message);
     }
 
     @KafkaListener(topics = "esp24_notifications_v2", groupId = "UpdateWeb", containerFactory = "notificationkafkaListenerContainerFactory")

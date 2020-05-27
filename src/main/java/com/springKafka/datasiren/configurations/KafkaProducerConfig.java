@@ -1,5 +1,6 @@
 package com.springKafka.datasiren.configurations;
 
+import com.springKafka.datasiren.model.Location;
 import com.springKafka.datasiren.model.Notification;
 import com.springKafka.datasiren.model.Sensor;
 import java.util.HashMap;
@@ -63,5 +64,20 @@ public class KafkaProducerConfig {
     @Bean
     public KafkaTemplate<String, Sensor> sensorKafkaTemplate() {
         return new KafkaTemplate<>(sensorProducerFactory());
+    }
+
+    //Locations
+    @Bean
+    public ProducerFactory<String, Location> locationProducerFactory() {
+        Map<String, Object> confProps = new HashMap<>();
+        confProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
+        confProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        confProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        return new DefaultKafkaProducerFactory<>(confProps);
+    }
+
+    @Bean
+    public KafkaTemplate<String, Location> locationKafkaTemplate() {
+        return new KafkaTemplate<>(locationProducerFactory());
     }
 }
