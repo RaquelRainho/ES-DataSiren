@@ -15,7 +15,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 @Slf4j
 @Service
-public class KafkaConsumerService {
+public class DataSeparationService {
 
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;

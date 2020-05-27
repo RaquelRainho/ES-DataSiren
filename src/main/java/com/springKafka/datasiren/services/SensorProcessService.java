@@ -85,10 +85,7 @@ public class SensorProcessService {
         String name = tmp[1];
         
         // Save name 
-        if(names.containsKey(id)){
-            names.replace(id, name);
-        }
-        else{
+        if(names.containsKey(id) == false){
             names.put(id, name);
         }
     }
