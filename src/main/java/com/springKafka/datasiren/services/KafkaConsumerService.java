@@ -35,14 +35,9 @@ public class KafkaConsumerService {
             kafkaTemplate.send("esp24_battery"      ,   id + " " + f.getBat());
             kafkaTemplate.send("esp24_temperature"  ,   id + " " + f.getTemp());
             kafkaTemplate.send("esp24_humidity"     ,   id + " " + f.getHum());
-            kafkaTemplate.send("esp24_HGT"          ,   id + " " + "-99");
-            kafkaTemplate.send("esp24_pressure"     ,   id + " " + "-99");
-            kafkaTemplate.send("esp24_NO2"          ,   id + " " + "-99");
-            kafkaTemplate.send("esp24_luminosity"   ,   id + " " + "-99");
-
+            
             id++;
 
         }
-        //log.info(p.toString());
     }
 }

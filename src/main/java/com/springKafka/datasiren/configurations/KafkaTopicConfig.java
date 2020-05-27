@@ -41,46 +41,26 @@ public class KafkaTopicConfig {
     
     @Bean
     public NewTopic sensor_3() {
-        return new NewTopic("esp24_HGT", 1, (short) 1);
-    }
-    
-    @Bean
-    public NewTopic sensor_4() {
-        return new NewTopic("esp24_pressure", 1, (short) 1);
-    }
-    
-    @Bean
-    public NewTopic sensor_5() {
-        return new NewTopic("esp24_NO2", 1, (short) 1);
-    }
-    
-    @Bean
-    public NewTopic sensor_6() {
         return new NewTopic("esp24_humidity", 1, (short) 1);
     }
     
     @Bean
-    public NewTopic sensor_7() {
-        return new NewTopic("esp24_luminosity", 1, (short) 1);
-    }
-    
-    @Bean
-    public NewTopic sensor_8() {
+    public NewTopic sensor_4() {
         return new NewTopic("esp24_battery", 1, (short) 1);
     }
     
     @Bean
-    public NewTopic sensor_9() {
+    public NewTopic sensor_5() {
         return new NewTopic("esp24_GPS", 1, (short) 1);
     }
     
     @Bean
-    public NewTopic sensor_10() {
+    public NewTopic sensor_6() {
         return new NewTopic("esp24_heartRate", 1, (short) 1);
     }
     
     @Bean
     public NewTopic notifications() {
-        return new NewTopic("esp24_notifications", 1, (short) 1);
+        return new NewTopic("esp24_notifications_v2", 1, (short) 1);
     }
 }

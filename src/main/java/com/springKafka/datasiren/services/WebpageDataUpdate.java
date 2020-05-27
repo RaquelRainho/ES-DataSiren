@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.springKafka.datasiren.model.Firefighter;
+import com.springKafka.datasiren.model.Notification;
 import java.util.HashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -25,13 +25,9 @@ public class WebpageDataUpdate {
     SimpMessagingTemplate template;
 
     private final HashMap<Integer, Firefighter> firefighters = new HashMap<>();
+    private final ObjectMapper mapper = new ObjectMapper();
+    private final ArrayNode outerArray = mapper.createArrayNode();
 
-    String[] names = {"Teresa", "Zé", "João"};
-
-    ObjectMapper mapper = new ObjectMapper();
-    ArrayNode outerArray = mapper.createArrayNode();
-
-    
     @KafkaListener(topics = "esp24_GPS", groupId = "UpdateWeb", containerFactory = "UpdateWebKafkaListenerContainerFactory")
     public void GPSWeb(@Payload String message) {
 
@@ -59,6 +55,7 @@ public class WebpageDataUpdate {
             firefighter.setId(id);
             firefighters.put(id, firefighter);
         }
+        //log.info(message);
     }
 
     @KafkaListener(topics = "esp24_CO", groupId = "UpdateWeb", containerFactory = "UpdateWebKafkaListenerContainerFactory")
@@ -80,6 +77,7 @@ public class WebpageDataUpdate {
             firefighter.setId(id);
             firefighters.put(id, firefighter);
         }
+        //log.info(message);
     }
 
     @KafkaListener(topics = "esp24_heartRate", groupId = "UpdateWeb", containerFactory = "UpdateWebKafkaListenerContainerFactory")
@@ -101,6 +99,7 @@ public class WebpageDataUpdate {
             firefighter.setId(id);
             firefighters.put(id, firefighter);
         }
+        //log.info(message);
     }
 
     @KafkaListener(topics = "esp24_battery", groupId = "UpdateWeb", containerFactory = "UpdateWebKafkaListenerContainerFactory")
@@ -122,6 +121,7 @@ public class WebpageDataUpdate {
             firefighter.setId(id);
             firefighters.put(id, firefighter);
         }
+        //log.info(message);
     }
 
     @KafkaListener(topics = "esp24_temperature", groupId = "UpdateWeb", containerFactory = "UpdateWebKafkaListenerContainerFactory")
@@ -144,6 +144,7 @@ public class WebpageDataUpdate {
 
             firefighters.put(id, firefighter);
         }
+        //log.info(message);
     }
 
     @KafkaListener(topics = "esp24_humidity", groupId = "UpdateWeb", containerFactory = "UpdateWebKafkaListenerContainerFactory")
@@ -166,27 +167,21 @@ public class WebpageDataUpdate {
 
             firefighters.put(id, firefighter);
         }
+        //log.info(message);
     }
 
-    @KafkaListener(topics = "esp24_notifications", groupId = "UpdateWeb", containerFactory = "UpdateWebKafkaListenerContainerFactory")
-    public void NotificationWeb(@Payload String message) {
-
-        String tmp = message.split(" ")[0];
-        tmp = tmp.substring(1, tmp.length());
-
-        int id = Integer.parseInt(tmp);
-        String messag = message.substring(tmp.length() + 2, message.length() - 1);
+    @KafkaListener(topics = "esp24_notifications_v2", groupId = "UpdateWeb", containerFactory = "notificationkafkaListenerContainerFactory")
+    public void NotificationWeb(@Payload Notification data) {
 
         ObjectNode outerObject1 = mapper.createObjectNode();
-        outerObject1.put("id", "" + id).put("alert", messag);
+        outerObject1.put("id", data.getId()).put("alert", data.getMessage());
 
         outerArray.add(outerObject1);
-
     }
 
     @Scheduled(fixedRate = 3000, initialDelay = 10000)
     private void UpdateWebPag() {
-        
+
         JsonNode actualObj = mapper.valueToTree(firefighters.values().toArray());
 
         ObjectNode outerObject = mapper.createObjectNode();
@@ -195,10 +190,11 @@ public class WebpageDataUpdate {
 
         String newmessage = prettyPrintJsonString(outerObject);
         template.convertAndSend("/topic/esp24-data", newmessage);
-        log.info(newmessage);
         outerArray.removeAll();
+
+        log.info(newmessage);
     }
-    
+
     public String prettyPrintJsonString(JsonNode jsonNode) {
         try {
             Object json = mapper.readValue(jsonNode.toString(), Object.class

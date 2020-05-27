@@ -2,10 +2,8 @@ package com.springKafka.datasiren.model;
 
 import java.io.Serializable;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 public class Firefighter implements Serializable{
 
     private long id;
