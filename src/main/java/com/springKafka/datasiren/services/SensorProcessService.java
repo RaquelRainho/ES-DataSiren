@@ -1,9 +1,9 @@
 package com.springKafka.datasiren.services;
 
-import com.google.gson.Gson;
+import com.springKafka.datasiren.model.Location;
+import com.springKafka.datasiren.model.Notification;
+import com.springKafka.datasiren.model.Sensor;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import lombok.extern.slf4j.Slf4j;
@@ -15,159 +15,166 @@ import org.springframework.stereotype.Service;
 @Service
 public class SensorProcessService {
 
-    HashMap <Integer,double[]> localizations = new HashMap <>();
-    
-    Gson g = new Gson();
-    
     @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
-    
-    
-    private String getLocation(int id){
-        
-        try {
-            double[] tmp1 = localizations.get(id);
-            String localization = "";
-            
-            for (int k = 0; k < tmp1.length - 1; k++) {
-                localization += String.valueOf(tmp1[k]) + " ";
-            }            
-            
-            return localization;
-        } catch (Exception e) {
+    private KafkaTemplate<String, Notification> notificationKafkaTemplate;
+
+    private final HashMap<Integer, Location> locations = new HashMap<>();
+    private final HashMap<Integer, String> names = new HashMap<>();
+
+    private String getMessage(int messageType, int id) {
+
+        String message;
+
+        switch (messageType) {
+            case 0:
+                message = "The firefighter id=" + id +" ( " + getName(id) + " )" 
+                        + " is located in " + getLocation(id)
+                        + " and has entered a dangerous environment.";
+                break;
+            case 1:
+                message = "The firefighter id=" + id +" ( " + getName(id) + " )"
+                        + " is located in " + getLocation(id)
+                        + " and has entered a very dangerous environment.";
+                break;
+            case 2:
+                message = "The firefighter id=" + id +" ( " + getName(id) + " )"
+                        + " is located in " + getLocation(id)
+                        + " and is probably injured or unconscious.";
+                break;
+            case 3:
+                message = "Contact lost with the firefighter id=" + id +" ( " + getName(id) + " )"
+                        + ", whose last location received was " + getLocation(id)
+                        + ", replacement battery needed.";
+                break;
+            default:
+                message = "ERROR";
+                break;
+
         }
-        return "unavelable";
+        return message;
+    }
+
+    private String getLocation(int id) {
+        
+        Location location = locations.get(id); 
+        
+        if (locations.containsKey(id)) {
+            return "( Latitude: "  + location.getLatitude()+ " "
+                    + "Longitude: " + location.getLongitude()+ " "
+                    + "Elevation: " + location.getElevation()+ " )";
+        } else {
+            return "( unavelable )";
+        }
+    }
+
+    private String getName(int id) {
+        
+        if (names.containsKey(id)) {
+            return names.get(id);
+        } else {
+            return "unavelable";
+        }
+    }
+
+    @KafkaListener(topics = "esp24_firefightersNames", groupId = "SensorProcessing", containerFactory = "senskafkaListenerContainerFactory")
+    public void FirefightersNamesProcess(@Payload String message) {
+       
+        // Read name
+        String [] tmp = message.split(" ");
+        int id = Integer.parseInt(tmp[0]);
+        String name = tmp[1];
+        
+        // Save name 
+        if(names.containsKey(id) == false){
+            names.put(id, name);
+        }
     }
     
-    @KafkaListener(topics = "esp24_GPS", groupId = "SensorProcessing", containerFactory = "SensorProcessingKafkaListenerContainerFactory")
-    public void GPSProcess(@Payload String message) {
+    @KafkaListener(topics = "esp24_GPS_v2", groupId = "SensorProcessing", containerFactory = "locationProcessingKafkaListenerContainerFactory")
+    public void GPSProcess(@Payload Location data) {
         
-        String[] tmp = message.split(" ");
-
-        int id = Integer.parseInt(tmp[0]);
-        double[] localization = new double[tmp.length-1];
-
-        for (int k=1; k < tmp.length-1; k++){
-            localization[k-1]= Double.parseDouble(tmp[k]);
-        }        
+        // Read GPS data
+        int id = data.getFirefighterID();
         
-        if(localizations.containsKey(id)){
-            localizations.replace(id, localization);
-        }else{
-            localizations.put(id, localization);
+        // Save GPS data 
+        if (locations.containsKey(id)) {
+            locations.replace(id, data);
+        } else {
+            locations.put(id, data);
         }
-        //log.info(Arrays.toString(localization));
-
     }
 
-    @KafkaListener(topics = "esp24_CO", groupId = "SensorProcessing", containerFactory = "SensorProcessingKafkaListenerContainerFactory")
-    public void COProcess(@Payload String message) {
-       
-        String[] tmp = message.split(" ");
-        
-        int id = Integer.parseInt(tmp[0]);
-        int value = Integer.parseInt(tmp[1]);
-        
-        String localization = getLocation(id);
-        
-        String tempmessage="";
-        if (value > 800) {
-            String text = "The firefighter " + id +
-                                                        "is located in "+ localization + 
-                                                        "and has entered a very dangerous environment.";
-            tempmessage = g.toJson("{\"text\": " + text + "}");
-            kafkaTemplate.send("esp24_notifications",       g.toJson(text));
-            log.info(g.toJson(text));
+    @KafkaListener(topics = "esp24_CO_v2", groupId = "SensorProcessing", containerFactory = "sensorProcessingKafkaListenerContainerFactory")
+    public void COProcess(@Payload Sensor data) {
 
-        } else if (value > 250) {
-            String text = "The firefighter " + id + "is located in "+ localization + "and has entered a dangerous environment.";
-            //JSONObject jsonObject = new JSONObject();
-            //try {
-            //    jsonObject.put("text", text);
-            //} catch (JSONException ex) {
-            //    Logger.getLogger(SensorProcessService.class.getName()).log(Level.SEVERE, null, ex);
-            //}
-            //String payload = jsonObject.toString();
-            kafkaTemplate.send("esp24_notifications",       g.toJson(text));
-            log.info(g.toJson(text));
-        } 
+        // Read CO data
+        int id = data.getFirefighterID();
+        double value = data.getValue();
+        String time = data.getTime();
+        String name = getName(id);
+
+        // Create and send Notification 
+        int MESSAGE_TYPE = 0;
+        Notification notification;
+
+        if (value > 250) {
+            if (value > 800) {
+                MESSAGE_TYPE = 1;
+            }
+            notification = new Notification(id, name, time, getMessage(MESSAGE_TYPE, id));
+            notificationKafkaTemplate.send("esp24_notifications_v2", notification);
+        }
     }
 
-    @KafkaListener(topics = "esp24_heartRate", groupId = "SensorProcessing", containerFactory = "SensorProcessingKafkaListenerContainerFactory")
-    public void HeartRateProcess(@Payload String message) {
-       
-        String[] tmp = message.split(" ");
+    @KafkaListener(topics = "esp24_heartRate_v2", groupId = "SensorProcessing", containerFactory = "sensorProcessingKafkaListenerContainerFactory")
+    public void HeartRateProcess(@Payload Sensor data) {
 
-        int id = Integer.parseInt(tmp[0]);
-        double value = Double.parseDouble(tmp[1]);
+        // Read heart rate data
+        int id = data.getFirefighterID();
+        double value = data.getValue();
+        String time = data.getTime();
+        String name = getName(id);
 
-        String localization = getLocation(id);
-        
-        String tempmessage="";
+        // Create and send Notification 
+        int MESSAGE_TYPE;
+        Notification notification;
+
         if (value < 60 | value > 150) {
-            String text = "The firefighter " + id +
-                                                        "is located in "+ localization + 
-                                                        "and is probably injured or unconscious.";
-            //JSONObject jsonObject = new JSONObject();
-            //try {
-            //    jsonObject.put("text", text);
-            //} catch (JSONException ex) {
-            //    Logger.getLogger(SensorProcessService.class.getName()).log(Level.SEVERE, null, ex);
-            //}
-            //String payload = jsonObject.toString();
-            kafkaTemplate.send("esp24_notifications",       g.toJson(text));
-            log.info(g.toJson(text));
-        } 
-    }
-    
-    @KafkaListener(topics = "esp24_battery", groupId = "SensorProcessing", containerFactory = "SensorProcessingKafkaListenerContainerFactory")
-    public void BatteryProcess(@Payload String message) {
-
-        String[] tmp = message.split(" ");
-
-        int id = Integer.parseInt(tmp[0]);
-        int value = Integer.parseInt(tmp[1]);
-
-        String localization = getLocation(id);
-        
-        String tempmessage="";
-        if (value <= 1) {
-            String text = "Contact lost with the firefighter " + id +
-                                                        ", whose last location received was " + localization + 
-                                                        ", replacement battery needed.";
-            //JSONObject jsonObject = new JSONObject();
-            //try {
-            //    jsonObject.put("text", text);
-            //} catch (JSONException ex) {
-            //    Logger.getLogger(SensorProcessService.class.getName()).log(Level.SEVERE, null, ex);
-            //}
-            //String payload = jsonObject.toString();
-            kafkaTemplate.send("esp24_notifications",       g.toJson(text));
-            log.info(g.toJson(text));
+            MESSAGE_TYPE = 2;
+            notification = new Notification(id, name, time, getMessage(MESSAGE_TYPE, id));
+            notificationKafkaTemplate.send("esp24_notifications_v2", notification);
         }
     }
+
+    @KafkaListener(topics = "esp24_battery_v2", groupId = "SensorProcessing", containerFactory = "sensorProcessingKafkaListenerContainerFactory")
+    public void BatteryProcess(@Payload Sensor data) {
+
+        // Read battery data
+        int id = data.getFirefighterID();
+        double value = data.getValue();
+        String time = data.getTime();
+        String name = getName(id);
+
+        // Create and send Notification 
+        int MESSAGE_TYPE;
+        Notification notification;
+
+        if (value <= 1) {
+            MESSAGE_TYPE = 3;
+            notification = new Notification(id, name, time, getMessage(MESSAGE_TYPE, id));
+            notificationKafkaTemplate.send("esp24_notifications_v2", notification);
+        }
+    }
+
+    /*
     
-    @KafkaListener(topics = "esp24_temperature", groupId = "SensorProcessing", containerFactory = "SensorProcessingKafkaListenerContainerFactory")
-    public void TemperatureProcess(@Payload String message) {
+    @KafkaListener(topics = "esp24_temperature_v2", groupId = "SensorProcessing", containerFactory = "sensorProcessingKafkaListenerContainerFactory")
+    public void TemperatureProcess(@Payload Sensor data) {
     }
 
-    @KafkaListener(topics = "esp24_HGT", groupId = "SensorProcessing", containerFactory = "SensorProcessingKafkaListenerContainerFactory")
-    public void HGTProcess(@Payload String message) {
+    @KafkaListener(topics = "esp24_humidity_v2", groupId = "SensorProcessing", containerFactory = "sensorProcessingKafkaListenerContainerFactory")
+    public void HumidityProcess(@Payload Sensor data) {
     }
 
-    @KafkaListener(topics = "esp24_pressure", groupId = "SensorProcessing", containerFactory = "SensorProcessingKafkaListenerContainerFactory")
-    public void PressureProcess(@Payload String message) {
-    }
-
-    @KafkaListener(topics = "esp24_NO2", groupId = "SensorProcessing", containerFactory = "SensorProcessingKafkaListenerContainerFactory")
-    public void NO2Process(@Payload String message) {
-    }
-
-    @KafkaListener(topics = "esp24_humidity", groupId = "SensorProcessing", containerFactory = "SensorProcessingKafkaListenerContainerFactory")
-    public void HumidityProcess(@Payload String message) {
-    }
-
-    @KafkaListener(topics = "esp24_luminosity", groupId = "SensorProcessing", containerFactory = "SensorProcessingKafkaListenerContainerFactory")
-    public void LuminosityProcess(@Payload String message) {
-    }
+     */
 }

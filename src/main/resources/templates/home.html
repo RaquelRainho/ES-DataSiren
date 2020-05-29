@@ -64,59 +64,7 @@
   <script type="text/javascript">
     var stompClient;
 
-    /* Chart Configuration */
-    /*var config = {
-    	type : 'line',
-    	data : {
-    		labels : [],
-    		datasets : [ {
-    			label : 'Temperature',
-    			backgroudColor : 'rgb(255, 99, 132)',
-    			borderColor : 'rgb(255, 99, 132)',
-    			data : [],
-    			fill : false
-
-    		} ]
-    	},
-    	options : {
-    		responsive : true,
-    		title : {
-    			display : true,
-    			text : 'Temperature'
-    		},
-    		tooltips : {
-    			mode : 'index',
-    			intersect : false
-    		},
-    		hover : {
-    			mode : 'nearest',
-    			intersect : true
-    		},
-    		scales : {
-    			xAxes : [ {
-    				display : true,
-    				type : 'time',
-    				time : {
-    					displayFormats : {
-    						quarter : 'h:mm:ss a'
-    					}
-    				},
-    				scaleLabel : {
-    					display : true,
-    					labelString : 'Time'
-    				}
-    			} ],
-    			yAxes : [ {
-    				display : true,
-    				scaleLabel : {
-    					display : true,
-    					labelString : 'Value'
-    				}
-    			} ]
-    		}
-    	}
-    };*/
-
+    
     /* Document Ready Event */
     $(document).ready(function () {
       var images = {
@@ -125,52 +73,46 @@
         '2': "heartRateLevels.png",
         '3': "connectionLost.png"
       }
+
       var firefighter_count = 0;
-      var firefighter_count = 0;
+
       coordsstart = [
         [40.06483992, -8.16039721],
         [40.06469093, -8.16050738],
         [40.06479192, -8.1604327]
       ];
-      batteryLevels = [80, 34, 5];
+      var windowClicked = 0;
+      // HR, Altitude, CO, Temperature, Humidity, Battery
+      dataValues = [
+        [0, 0, 0],
+        [1152, 1145, 1234],
+        [250, 125, 256],
+        [25, 25.6, 30],
+        [21, 23, 22],
+        [80, 34, 5]
+      ];
+      firefightersData = [{
+                name: "Teresa Carmo",
+                image: "images/Teresa.png",
+                id: "109C"
+              },
+              {
+                name: "Zé Manuel",
+                image: "images/Ze.png",
+                id: "146B"
+              },
+              {
+                name: "João Lima",
+                image: "images/Joao.png",
+                id: "301A"
+              }
+            ];
+    
+
+      // Create Markers
       for (var i = 0; i < coordsstart.length; i++) {
         createMarker(coordsstart[i], i);
       }
-
-      /*var alerts = [{id: '0', alert: "Firefighter Teresa is located in (41,98034, -8,84732) and has entered a dangerous environment!"},
-                    {id: '1', alert: "Firefighter José is located in (42,98034, -7,84732) and has entered a VERY dangerous environment!"},
-                    {id: '2', alert: "Firefighter José is located in (42,98034, -8,84732) and is probably injured or unconscious!"},
-                    {id: '3', alert: "Lost connection with firefighter Rodriguez, last known position (42,98034, -8,84732), replacement battery needed!"}
-                  ];
-      var alertsJSON = JSON.stringify(alerts);
-
-      if(alerts != null){
-        setTimeout(() => {
-          alerts.forEach(alertNotification);
-        function alertNotification(item, index){
-          console.log(item);
-          console.log(item.alert);
-          var id = item.id;
-          console.log(images[id]);
-
-          $("#warning").append("<div class=\"alert\"><span class=\"closebtn\" onclick=\"this.parentElement.style.display='none';\">&times;</span> <img src=\"images/"+images[id]+"\" alt=\"danger\" style=\"float:left;width:23%; padding-right:20px;\">  <strong>Danger!</strong></br>  "+item.alert+"</div>");
-          $("#warning").show();
-
-          setTimeout(function(){
-
-            $("#warning").hide();
-            $("#noti").append("<a class=\"dropdown-item\" href=\"javascript:void(0)\">"+item.alert+"</a>");
-            $('#notinumber').html(parseInt($('#notinumber').html(), 10)+1);
-
-          }, 6000)
-        }  
-        }, 5000);
-        
-      }*/
-
-
-      //var ctx = document.getElementById('lineChart').getContext('2d');
-      //window.myLine = new Chart(ctx, config);
 
       /* Configuring WebSocket on Client Side */
       var socket = new SockJS('/esp24-data');
@@ -179,9 +121,50 @@
         stompClient.subscribe('/topic/esp24-data', function (location) {
           var myJSON = location.body;
           var myObj = JSON.parse(myJSON);
-          console.log('JSON -------  ' + myObj);
+          console.log('JSON -------  ' + JSON.stringify(myObj));
+          // Send Alert
           myObj.alerts.forEach(alertNotification);
 
+          // Update Markers and Environment
+          for (var i = 0; i < 4; i++) {
+            coords = [myObj.Firefighters[i].lat, myObj.Firefighters[i].long];
+            animatedMove(markers[i], .5, markers[i], coords, i);
+            updateValues(windowClicked, i);
+            updateDistances(windowClicked);
+          }
+
+          //// Update Values Function
+          function updateValues(window, id) {
+            dataValues[0][id] = myObj.Firefighters[id].hr;
+            dataValues[1][id] = myObj.Firefighters[id].alt;
+            dataValues[2][id] = myObj.Firefighters[id].co;
+            dataValues[3][id] = myObj.Firefighters[id].temp;
+            dataValues[4][id] = myObj.Firefighters[id].hum;
+            dataValues[5][id] = myObj.Firefighters[id].bat;
+            $('#altitude').text(dataValues[1][window]);
+            $('#colevel').text(dataValues[2][window]);
+            $('#temperature').text(dataValues[3][window]);
+            $('#humidity').text(dataValues[4][window]);
+            $('#percentage').text(dataValues[5][window]+' % ');
+            $('head').append('<style>.battery-icon:before { content: \'\'; position: absolute;left: 4px;top: 4px;width: '+dataValues[5][id]+'% ;height: 42px;background-color:rgb(13, 139, 70);border-radius: 5px;}</style>');
+          }
+
+           //// Update Distances Function
+           function updateDistances(id) {
+            var distances = {};
+            for (var i = 0; i < coordsstart.length; i++) {
+              if (i != id) {
+                console.log(myObj.Firefighters[id].lat+"," + myObj.Firefighters[id].long+"," + myObj.Firefighters[i].lat+"," + myObj.Firefighters[i].long);
+                var dist = calcCrow(myObj.Firefighters[id].lat, myObj.Firefighters[id].long, myObj.Firefighters[i].lat, myObj.Firefighters[i].long).toFixed(3);
+                distances[i] = dist;
+              }
+            }
+            var minimumKey = lowestValueAndKey(distances);
+            //console.log("this "+id +" has closest id "+ minimumKey);
+            $("#closestImg").attr("src", firefightersData[minimumKey].image);
+            $('#closestTxt').text(firefightersData[minimumKey].name + ' in '+ distances[minimumKey]+' km');   
+          }
+          //// Alert Function
           function alertNotification(item, index) {
             console.log(item);
             console.log(item.alert);
@@ -204,13 +187,7 @@
 
             }, 6000)
           }
-
-
-          for (var i = 0; i < 4; i++) {
-            coords = [myObj.firefighters[i].lat, myObj.firefighters[i].long];
-            animatedMove(markers[i], .5, markers[i], coords, i);
-
-          }
+          ///////////////
         });
       });
 
@@ -610,32 +587,10 @@
 </head>
 
 <body>
-  <!--<div class="alert alert-danger" role="alert" style="width:1300px;margin-left:40%;margin-top:10px;">
-		<p class="text-center">Data : <b id="temperature">0</b></p>
-	</div>
-	<div class="model">
-		<div class="modal-dialog" style="width:0%;height:auto">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Temperature</h5>
-				</div>
-				<div class="model-body">
-					<div class="container" style="width:80%">
-						<canvas id="lineChart"></canvas>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>-->
 
   <body class="dark-edition">
     <div class="wrapper ">
       <div class="sidebar" data-color="purple" data-background-color="black" data-image="assets/img/back4.jpg">
-        <!--
-            Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
-    
-            Tip 2: you can also add an image using data-image tag
-        -->
         <div class="logo">
           <img src="images/logo.png" alt="..." width="90%">
         </div>
@@ -796,7 +751,7 @@
                         <img src="images/altitude.png" alt="img" width="100px" />
                       </div>
                       <div style="display:inline-block;">
-                        <span class="altitude topright" style=" font-weight: bold;font-size: 16pt;">1152</span>
+                        <span id = "altitude" class="topright" style=" font-weight: bold;font-size: 16pt;">1152</span>
                         <span class="topright2"
                           style=" font-weight: bold;font-size: 10pt;color:rgb(170, 24, 48)">meters</span>
                       </div>
@@ -808,7 +763,7 @@
                         <img src="images/co.png" alt="img" width="100px" />
                       </div>
                       <div style="display:inline-block;">
-                        <span class="colevel topright" style=" font-weight: bold;font-size: 16pt;">250</span>
+                        <span id="colevel" class="topright" style=" font-weight: bold;font-size: 16pt;">250</span>
                         <span class="topright2"
                           style=" font-weight: bold;font-size: 10pt;color:rgb(170, 24, 48)">ppm</span>
                       </div>
@@ -821,7 +776,7 @@
                           <img src="images/temperature.png" alt="img" width="70px" style="padding-left: 20px;" />
                         </div>
                         <div style="display:inline-block;">
-                          <span class="temperature topright" style=" font-weight: bold;font-size: 16pt;">25</span>
+                          <span id ="temperature" class="topright" style=" font-weight: bold;font-size: 16pt;">25</span>
                           <span class="topright2"
                             style=" font-weight: bold;font-size: 10pt;color:rgb(170, 24, 48)">ºC</span>
                         </div>
@@ -834,7 +789,7 @@
                           <img src="images/humidity.png" alt="img" width="70px" style="padding-left: 20px;" />
                         </div>
                         <div style="display:inline-block;">
-                          <span class="humidity topright" style=" font-weight: bold;font-size: 16pt;">5</span>
+                          <span id="humidity" class="topright" style=" font-weight: bold;font-size: 16pt;">5</span>
                           <span class="topright2"
                             style=" font-weight: bold;font-size: 10pt;color:rgb(170, 24, 48)">%</span>
                         </div>
@@ -904,22 +859,7 @@
 
 
             info_windows.push(infoWindow);
-            var firefightersData = [{
-                name: "Teresa Carmo",
-                image: "images/Teresa.png",
-                id: "109C"
-              },
-              {
-                name: "Zé Manuel",
-                image: "images/Ze.png",
-                id: "146B"
-              },
-              {
-                name: "João Lima",
-                image: "images/Joao.png",
-                id: "301A"
-              }
-            ]
+            
 
             marker.addListener('mouseover', function (event) {
               for (var j = 0; j < info_windows.length; j++) {
@@ -939,6 +879,8 @@
             });
             status = false;
             marker.addListener('click', function () {
+              windowClicked = id;
+               // delete LATER
               var distances = {};
               for (var i = 0; i < coordsstart.length; i++) {
                 if (i != id) {
@@ -951,15 +893,17 @@
               //console.log("this "+id +" has closest id "+ minimumKey);
               $("#closestImg").attr("src", firefightersData[minimumKey].image);
               $('#closestTxt').text(firefightersData[minimumKey].name + ' in '+ distances[minimumKey]+' km');
-              $('head').append('<style>.battery-icon:before { content: \'\'; position: absolute;left: 4px;top: 4px;width: '+batteryLevels[id]+'% ;height: 42px;background-color:rgb(13, 139, 70);border-radius: 5px;}</style>');
-              $('#percentage').text(batteryLevels[id]+' % ');
-              
-              $('.vehicle_name', $('#vehicle_info')).text(firefightersData[id].name + ' (' + firefightersData[id]
-                .id +
-                ')');
+              $('#altitude').text(dataValues[1][id]);
+              $('#colevel').text(dataValues[2][id]);
+              $('#temperature').text(dataValues[3][id]);
+              $('#humidity').text(dataValues[4][id]);
+              $('head').append('<style>.battery-icon:before { content: \'\'; position: absolute;left: 4px;top: 4px;width: '+dataValues[5][id]+'% ;height: 42px;background-color:rgb(13, 139, 70);border-radius: 5px;}</style>');
+              $('#percentage').text(dataValues[5][id]+' % ');
+              ///////
+             
+              $('.vehicle_name', $('#vehicle_info')).text(firefightersData[id].name + ' (' + firefightersData[id].id +')');
               $("#theImg").attr("src", firefightersData[id].image);
               $('#vehicle_info').removeClass('hidden');
-
             });
 
             markers.push(marker);
