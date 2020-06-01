@@ -93,7 +93,7 @@ pipeline {
                 steps{
                     sh 'echo "running tests"'
                     sleep 90
-                    sh 'mvn test'
+                    sh 'mvn -Dtest=TestStepDefs test'
                     
                     //sshagent(credentials: ['esp24']){
                     //    sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 docker stop esp24-datasiren || true"

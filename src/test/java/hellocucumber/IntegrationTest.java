@@ -44,7 +44,7 @@ public class IntegrationTest {
     String time = LocalDateTime.now().toString();
     String location = "(0, 0, 0)";
     
-    @Given("^I have the current CO sensor data$")
+    @Given("^the current CO sensor data is sent to the system$")
     public void i_have_the_current_CO_sensor_data(){
         Producer<Integer, String> producer = configureProducer();
         producer.send(new ProducerRecord<>(PROD_TOPIC, 1, new Sensor("CO", 0, firefighterId, time, firefighterCO).toString()));
