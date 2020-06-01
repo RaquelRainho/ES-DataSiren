@@ -36,6 +36,16 @@ pipeline {
                     sh 'mvn -DskipTests deploy'
                 }
             }
+            stage('Integration test stage'){
+                when{
+                    branch 'testing'
+                }
+                steps{
+                    sh 'echo "running integration tests"'
+                    //sh 'mvn -Dit.test=IntegrationTest verify'
+                }
+            }
+
             stage('Cleanup stage'){
                 steps{
                     sshagent(credentials: ['esp24']){
