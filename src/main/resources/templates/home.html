@@ -81,7 +81,7 @@
         [40.06469093, -8.16050738],
         [40.06479192, -8.1604327]
       ];
-      var windowClicked = 0;
+      windowClicked = 0;
       // HR, Altitude, CO, Temperature, Humidity, Battery
       dataValues = [
         [0, 0, 0],
@@ -130,6 +130,7 @@
             coordsstart[i] = [myObj.Firefighters[i].lat, myObj.Firefighters[i].longi];
             animatedMove(markers[i], .5, markers[i], coords, i);
             updateValues(i);
+            console.log(JSON.stringify(dataValues));
           }
           updateDistances(windowClicked);
           updateDisplay(windowClicked);
@@ -974,8 +975,8 @@
             status = false;
             marker.addListener('click', function () {
               windowClicked = id;
-
-              switch (windowClicked) {
+              console.log("WINDOW = "+windowClicked);
+              switch (id) {
                 case 0:
                   $('#chartContainer1').show();
                   $('#chartContainer2').hide();
@@ -994,13 +995,17 @@
                 default:
                   
               }
-             
-              
+
+
+
+
+
 
               $('.vehicle_name', $('#vehicle_info')).text(firefightersData[id].name + ' (' + firefightersData[id]
                 .id + ')');
               $("#theImg").attr("src", firefightersData[id].image);
               $('#vehicle_info').removeClass('hidden');
+              windowClicked = id;
             });
 
             markers.push(marker);
