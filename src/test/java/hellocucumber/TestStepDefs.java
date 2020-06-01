@@ -54,7 +54,7 @@ public class TestStepDefs {
     
     
     /*  SCENARIO 5  */
-    
+    /*
     int id, nFirefighters = 3;
     double[] gpsLat = new double[nFirefighters];
     double[] gpsLong = new double[nFirefighters];
@@ -107,5 +107,5 @@ public class TestStepDefs {
                         envCO[id], envHum[id], envTemp[id], 
                         heartrate[id], battery[id]);
         }
-    }
+    }*/
 }
