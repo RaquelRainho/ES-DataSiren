@@ -53,5 +53,5 @@ while c < 160:
 			data["firefighters"][2].update({"hr": row[1]})
 		hr_idx += 1
 	producer.produce(json.dumps(data).encode())
-	sleep(1)
+	sleep(5)
 	c += 1

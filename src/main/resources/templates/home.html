@@ -64,7 +64,7 @@
   <script type="text/javascript">
     var stompClient;
 
-    
+
     /* Document Ready Event */
     $(document).ready(function () {
       var images = {
@@ -92,22 +92,21 @@
         [80, 34, 5]
       ];
       firefightersData = [{
-                name: "Teresa Carmo",
-                image: "images/Teresa.png",
-                id: "109C"
-              },
-              {
-                name: "Zé Manuel",
-                image: "images/Ze.png",
-                id: "146B"
-              },
-              {
-                name: "João Lima",
-                image: "images/Joao.png",
-                id: "301A"
-              }
-            ];
-    
+          name: "Teresa Carmo",
+          image: "images/Teresa.png",
+          id: "109C"
+        },
+        {
+          name: "Zé Manuel",
+          image: "images/Ze.png",
+          id: "146B"
+        },
+        {
+          name: "João Lima",
+          image: "images/Joao.png",
+          id: "301A"
+        }
+      ];
 
       // Create Markers
       for (var i = 0; i < coordsstart.length; i++) {
@@ -124,52 +123,62 @@
           console.log('JSON -------  ' + JSON.stringify(myObj));
           // Send Alert
           myObj.alerts.forEach(alertNotification);
-
+          console.log('TEST -------  ' + JSON.stringify(myObj.Firefighters[0].lat));
           // Update Markers and Environment
-          for (var i = 0; i < 4; i++) {
-            coords = [myObj.Firefighters[i].lat, myObj.Firefighters[i].long];
+          for (var i = 0; i < coordsstart.length; i++) {
+            coords = [myObj.Firefighters[i].lat, myObj.Firefighters[i].longi];
+            coordsstart[i] = [myObj.Firefighters[i].lat, myObj.Firefighters[i].longi];
             animatedMove(markers[i], .5, markers[i], coords, i);
-            updateValues(windowClicked, i);
-            updateDistances(windowClicked);
+            updateValues(i);
           }
+          updateDistances(windowClicked);
+          updateDisplay(windowClicked);
 
           //// Update Values Function
-          function updateValues(window, id) {
-            dataValues[0][id] = myObj.Firefighters[id].hr;
-            dataValues[1][id] = myObj.Firefighters[id].alt;
-            dataValues[2][id] = myObj.Firefighters[id].co;
-            dataValues[3][id] = myObj.Firefighters[id].temp;
-            dataValues[4][id] = myObj.Firefighters[id].hum;
-            dataValues[5][id] = myObj.Firefighters[id].bat;
-            $('#altitude').text(dataValues[1][window]);
-            $('#colevel').text(dataValues[2][window]);
-            $('#temperature').text(dataValues[3][window]);
-            $('#humidity').text(dataValues[4][window]);
-            $('#percentage').text(dataValues[5][window]+' % ');
-            $('head').append('<style>.battery-icon:before { content: \'\'; position: absolute;left: 4px;top: 4px;width: '+dataValues[5][id]+'% ;height: 42px;background-color:rgb(13, 139, 70);border-radius: 5px;}</style>');
+          function updateValues(i) {
+            dataValues[0][i] = myObj.Firefighters[i].hr;
+            dataValues[1][i] = myObj.Firefighters[i].alt;
+            dataValues[2][i] = myObj.Firefighters[i].co;
+            dataValues[3][i] = myObj.Firefighters[i].temp;
+            dataValues[4][i] = myObj.Firefighters[i].hum;
+            dataValues[5][i] = myObj.Firefighters[i].bat;
+          }
+          //// Update Display
+          function updateDisplay(windowClicked) {
+
+            $('#altitude').text(dataValues[1][windowClicked]);
+            $('#colevel').text(dataValues[2][windowClicked]);
+            $('#temperature').text(dataValues[3][windowClicked]);
+            $('#humidity').text(dataValues[4][windowClicked]);
+            $('#percentage').text(dataValues[5][windowClicked] + ' % ');
+            $('head').append(
+              '<style>.battery-icon:before { content: \'\'; position: absolute;left: 4px;top: 4px;width: ' +
+              dataValues[5][windowClicked] +
+              '% ;height: 42px;background-color:rgb(13, 139, 70);border-radius: 5px;}</style>');
           }
 
-           //// Update Distances Function
-           function updateDistances(id) {
+          //// Update Distances Function
+          function updateDistances(windowClicked) {
             var distances = {};
             for (var i = 0; i < coordsstart.length; i++) {
-              if (i != id) {
-                console.log(myObj.Firefighters[id].lat+"," + myObj.Firefighters[id].long+"," + myObj.Firefighters[i].lat+"," + myObj.Firefighters[i].long);
-                var dist = calcCrow(myObj.Firefighters[id].lat, myObj.Firefighters[id].long, myObj.Firefighters[i].lat, myObj.Firefighters[i].long).toFixed(3);
+              if (i != windowClicked) {
+                console.log(myObj.Firefighters[windowClicked].lat + "," + myObj.Firefighters[windowClicked].longi + "," + myObj
+                  .Firefighters[i].lat + "," + myObj.Firefighters[i].longi);
+                var dist = calcCrow(myObj.Firefighters[windowClicked].lat, myObj.Firefighters[windowClicked].longi, myObj
+                  .Firefighters[i].lat, myObj.Firefighters[i].longi).toFixed(3);
                 distances[i] = dist;
               }
             }
             var minimumKey = lowestValueAndKey(distances);
             //console.log("this "+id +" has closest id "+ minimumKey);
             $("#closestImg").attr("src", firefightersData[minimumKey].image);
-            $('#closestTxt').text(firefightersData[minimumKey].name + ' in '+ distances[minimumKey]+' km');   
+            $('#closestTxt').text(firefightersData[minimumKey].name + ' in ' + distances[minimumKey] +
+              ' km');
           }
           //// Alert Function
           function alertNotification(item, index) {
             console.log(item);
-            console.log(item.alert);
             var id = item.id;
-            console.log(images[id]);
 
             $("#warning").append(
               "<div class=\"alert\"><span class=\"closebtn\" onclick=\"this.parentElement.style.display='none';\">&times;</span> <img src=\"images/" +
@@ -181,11 +190,12 @@
             setTimeout(function () {
 
               $("#warning").hide();
+              $("#warning").empty();
               $("#noti").append("<a class=\"dropdown-item\" href=\"javascript:void(0)\">" + item.alert +
                 "</a>");
               $('#notinumber').html(parseInt($('#notinumber').html(), 10) + 1);
 
-            }, 6000)
+            }, 3000)
           }
           ///////////////
         });
@@ -268,12 +278,13 @@
 
     #warning {
       position: absolute;
-      top: 70px;
-      right: 30px;
+      top: 100px;
+      right: 1200px;
       z-index: 99;
       color: white;
       padding: 10px;
-      width: 500px;
+      font-size: 7pt;
+      width: 400px;
     }
 
     .closebtn {
@@ -405,39 +416,37 @@
       clear: both;
     }
 
- 
+
     .battery-icon {
-  width: 200px;
-  height: 60px;
-  border-radius: 10px;
-  border: 5px solid #FFF;
-  transform: translate(40%,59%);
-}
+      width: 200px;
+      height: 60px;
+      border-radius: 10px;
+      border: 5px solid #FFF;
+      transform: translate(40%, 59%);
+    }
 
-.battery-icon:after {
-    content: '';
-    position: absolute;
-    right: -15px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 15px;
-    height: 30px;
-    border-radius: 5px;
-    background: #fffefe;
-}
+    .battery-icon:after {
+      content: '';
+      position: absolute;
+      right: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 15px;
+      height: 30px;
+      border-radius: 5px;
+      background: #fffefe;
+    }
 
-.battery-icon:before {
-  content: '';
-  position: absolute;
-  left: 4px;
-  top: 4px;
-  width: 95% ; 
-  height: 42px;
-  background-color: rgb(13, 139, 70);
-  border-radius: 5px;
-}
-
-
+    .battery-icon:before {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 4px;
+      width: 95%;
+      height: 42px;
+      background-color: rgb(13, 139, 70);
+      border-radius: 5px;
+    }
   </style>
   <link href="static/css/reset.css" rel="stylesheet" type="text/css" />
   <link href="static/css/style.css" rel="stylesheet" type="text/css" />
@@ -446,8 +455,10 @@
   <script>
     window.onload = function () {
 
-      var dps = []; // dataPoints
-      var chart = new CanvasJS.Chart("chartContainer", {
+      var dps1 = []; // dataPoints1
+      var dps2 = []; // dataPoints2
+      var dps3 = []; // dataPoints3
+      var chart1 = new CanvasJS.Chart("chartContainer1", {
         animationEnabled: true,
         backgroundColor: "rgba(255,101,80,0)",
         theme: "light2",
@@ -488,7 +499,99 @@
         data: [{
           axisYType: "secondary",
           type: "line",
-          dataPoints: dps,
+          dataPoints: dps1,
+          color: "#b3003b",
+        }],
+
+      });
+      var chart2 = new CanvasJS.Chart("chartContainer2", {
+        animationEnabled: true,
+        backgroundColor: "rgba(255,101,80,0)",
+        theme: "light2",
+        axisY2: {
+          labelFontColor: "white",
+          gridThickness: 0,
+          tickLength: 0,
+          lineThickness: 0,
+          includeZero: false
+        },
+        axisX: {
+          labelFontColor: "white",
+          gridThickness: 0,
+          tickLength: 0,
+          lineThickness: 0,
+          includeZero: false
+        },
+        toolTip: {
+          shared: true,
+          backgroundColor: "#3f3361",
+
+          contentFormatter: function (e) {
+
+            var content = "<span style=\"color:	#e6f2ff;\">Time: </span> " +
+              "<strong> <span style=\"color: white;\">" + e.entries[0].dataPoint.x + "</span></strong>";
+            content += "<br/>";
+            content += "<span style=\"color:#e6f2ff;\">Rate: </span> " +
+              "<strong> <span style=\"color: white;\">" + e.entries[0].dataPoint.y + " bpm</span></strong>";
+            content += "<br/>";
+
+            return content;
+          },
+
+          cornerRadius: 20,
+          borderColor: "#b3003b",
+        },
+
+        data: [{
+          axisYType: "secondary",
+          type: "line",
+          dataPoints: dps2,
+          color: "#b3003b",
+        }],
+
+      });
+      var chart3 = new CanvasJS.Chart("chartContainer3", {
+        animationEnabled: true,
+        backgroundColor: "rgba(255,101,80,0)",
+        theme: "light2",
+        axisY2: {
+          labelFontColor: "white",
+          gridThickness: 0,
+          tickLength: 0,
+          lineThickness: 0,
+          includeZero: false
+        },
+        axisX: {
+          labelFontColor: "white",
+          gridThickness: 0,
+          tickLength: 0,
+          lineThickness: 0,
+          includeZero: false
+        },
+        toolTip: {
+          shared: true,
+          backgroundColor: "#3f3361",
+
+          contentFormatter: function (e) {
+
+            var content = "<span style=\"color:	#e6f2ff;\">Time: </span> " +
+              "<strong> <span style=\"color: white;\">" + e.entries[0].dataPoint.x + "</span></strong>";
+            content += "<br/>";
+            content += "<span style=\"color:#e6f2ff;\">Rate: </span> " +
+              "<strong> <span style=\"color: white;\">" + e.entries[0].dataPoint.y + " bpm</span></strong>";
+            content += "<br/>";
+
+            return content;
+          },
+
+          cornerRadius: 20,
+          borderColor: "#b3003b",
+        },
+
+        data: [{
+          axisYType: "secondary",
+          type: "line",
+          dataPoints: dps3,
           color: "#b3003b",
         }],
 
@@ -496,73 +599,18 @@
 
       var xVal = 0;
       var yVal = 100;
-      var updateInterval = 1000;
+      var updateInterval = 5000;
       var dataLength = 20; // number of dataPoints visible at any point
-      var hr = [88.24148594
-,88.21296329
-,88.16528767
-,88.07361184
-,87.91943729
-,87.74005835
-,87.58436635
-,87.40482139
-,87.25948666
-,87.14999316
-,87.08389685
-,87.02629575
-,86.98813705
-,86.98813705
-,86.97604734
-,86.95664694
-,86.94926757
-,86.93910923
-,86.92614711
-,86.92614711
-,86.93415906
-,86.93142322
-,86.92603361
-,86.92336301
-,86.92336301
-,86.90992883
-,86.88000825
-,86.82966186
-,86.78197013
-,86.74040814
- ,86.73491979
- ,86.74047548
- ,86.7881511
- ,86.88322281
- ,86.99803059
- ,87.17638338
- ,87.33240748
- ,87.45969885
- ,87.58771255
- ,87.69154166
- ,87.75905052
- ,87.8172232
- ,87.87928341
- ,87.87928341
- ,87.84551688
- ,87.81334403
- ,87.74958514
- ,87.65051258
- ,87.58159371
- ,87.52259966
- ,87.46073192
- ,87.41759035
- ,87.43102453
- ,87.44938884
-,87.47056573
-,87.53532512]
 
-      var updateChart = function (count) {
+
+      var updateChart1 = function (count) {
 
         count = count || 1;
 
         for (var j = 0; j < count; j++) {
 
-          yVal = hr[j];
-          dps.push({
+          yVal = dataValues[0][0];
+          dps1.push({
             x: xVal,
             y: yVal
           });
@@ -570,16 +618,63 @@
           xVal++;
         }
 
-        if (dps.length > dataLength) {
-          dps.shift();
+        if (dps1.length > dataLength) {
+          dps1.shift();
         }
 
-        chart.render();
+        chart1.render();
       };
 
-      updateChart(dataLength);
+      var updateChart2 = function (count) {
+
+        count = count || 1;
+
+        for (var j = 0; j < count; j++) {
+
+          yVal = dataValues[0][1];
+          dps2.push({
+            x: xVal,
+            y: yVal
+          });
+          document.getElementById('rate').innerHTML = yVal.toFixed(5);
+          xVal++;
+        }
+
+        if (dps2.length > dataLength) {
+          dps2.shift();
+        }
+
+        chart2.render();
+      };
+      var updateChart3 = function (count) {
+
+        count = count || 1;
+
+        for (var j = 0; j < count; j++) {
+
+          yVal = dataValues[0][2];
+          dps3.push({
+            x: xVal,
+            y: yVal
+          });
+          document.getElementById('rate').innerHTML = yVal.toFixed(5);
+          xVal++;
+        }
+
+        if (dps3.length > dataLength) {
+          dps3.shift();
+        }
+
+        chart3.render();
+      };
+
+      updateChart1(dataLength);
+      updateChart2(dataLength);
+      updateChart3(dataLength);
       setInterval(function () {
-        updateChart()
+        updateChart1()
+        updateChart2()
+        updateChart3()
       }, updateInterval);
 
     }
@@ -642,18 +737,14 @@
                   <a class="nav-link" href="javscript:void(0)" id="navbarDropdownMenuLink" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
                     <i class="material-icons"
-                      style="font-size:50px;color:rgb(218, 218, 16); padding-right: 100px;">notifications</i>
-                    <span id="notinumber" class="notification">5</span>
+                      style="font-size:50px;color:rgb(218, 218, 16); padding-left: 1420px;">notifications</i>
+                    <span id="notinumber" class="notification">0</span>
                     <p class="d-lg-none d-md-block">
                       Some Alerts
                     </p>
                   </a>
                   <div id="noti" class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="javascript:void(0)">Mike John responded to your email</a>
-                    <a class="dropdown-item" href="javascript:void(0)">You have 5 new tasks</a>
-                    <a class="dropdown-item" href="javascript:void(0)">You're now friend with Andrew</a>
-                    <a class="dropdown-item" href="javascript:void(0)">Another Notification</a>
-                    <a class="dropdown-item" href="javascript:void(0)">Another One</a>
+                   
                   </div>
                 </li>
               </ul>
@@ -664,7 +755,7 @@
         <div id="over_map">
 
           <div>
-            <span>Firefighters on Mission: </span><span id="firefighter">0</span>
+            <span>Firefighters on Mission: </span><span id="firefighter">3</span>
             <br>
 
           </div>
@@ -699,7 +790,7 @@
               <div>
                 <b>
                   <center><span class="vehicle_name"></span> <input type="button" class="panel_collapsible expanded" />
-                   
+
                   </center>
                 </b>
 
@@ -737,7 +828,9 @@
                   </div>
                   <div class="column2">
                     <center>
-                      <div id="chartContainer" style="height: 100px; width:100%;"></div>
+                      <div id="chartContainer1" style="height: 100px; width:100%;"></div>
+                      <div id="chartContainer2" style="height: 100px; width:100%;"></div>
+                      <div id="chartContainer3" style="height: 100px; width:100%;"></div>
                     </center>
 
                     <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
@@ -751,7 +844,7 @@
                         <img src="images/altitude.png" alt="img" width="100px" />
                       </div>
                       <div style="display:inline-block;">
-                        <span id = "altitude" class="topright" style=" font-weight: bold;font-size: 16pt;">1152</span>
+                        <span id="altitude" class="topright" style=" font-weight: bold;font-size: 16pt;">1152</span>
                         <span class="topright2"
                           style=" font-weight: bold;font-size: 10pt;color:rgb(170, 24, 48)">meters</span>
                       </div>
@@ -776,7 +869,7 @@
                           <img src="images/temperature.png" alt="img" width="70px" style="padding-left: 20px;" />
                         </div>
                         <div style="display:inline-block;">
-                          <span id ="temperature" class="topright" style=" font-weight: bold;font-size: 16pt;">25</span>
+                          <span id="temperature" class="topright" style=" font-weight: bold;font-size: 16pt;">25</span>
                           <span class="topright2"
                             style=" font-weight: bold;font-size: 10pt;color:rgb(170, 24, 48)">ºC</span>
                         </div>
@@ -797,13 +890,14 @@
                     </div>
                   </div>
                   <div class="roww" style="height: 100px;">
-                    
+
                     <div class="battery-icon" style="position: relative;z-index: 100;"></div>
-                    
-                    <center><span id="percentage" style=" font-weight: bold;font-size: 16pt;position: relative;z-index: 103;"></span></center>
+
+                    <center><span id="percentage"
+                        style=" font-weight: bold;font-size: 16pt;position: relative;z-index: 103;"></span></center>
                   </div>
                 </div>
-                
+
               </div>
 
             </div>
@@ -811,10 +905,10 @@
           <div id="vehicle_popup_container" class="hidden">
             <div id="vehicle_popup">
               <center><span class="vehicle_name"></span>
-              <br />
-              <div id="image"><img id="theImg2" src="" width=180px; /></div>
-              <br />
-              <p class="status"></p>
+                <br />
+                <div id="image"><img id="theImg2" src="" width=180px; /></div>
+                <br />
+                <p class="status"></p>
 
             </div>
           </div>
@@ -859,7 +953,7 @@
 
 
             info_windows.push(infoWindow);
-            
+
 
             marker.addListener('mouseover', function (event) {
               for (var j = 0; j < info_windows.length; j++) {
@@ -880,28 +974,31 @@
             status = false;
             marker.addListener('click', function () {
               windowClicked = id;
-               // delete LATER
-              var distances = {};
-              for (var i = 0; i < coordsstart.length; i++) {
-                if (i != id) {
-                  console.log(coordsstart[id][0]+"," + coordsstart[id][1]+"," + coordsstart[i][0]+"," + coordsstart[i][1]);
-                  var dist = calcCrow(coordsstart[id][0], coordsstart[id][1], coordsstart[i][0], coordsstart[i][1]).toFixed(3);
-                  distances[i] = dist;
-                }
+
+              switch (windowClicked) {
+                case 0:
+                  $('#chartContainer1').show();
+                  $('#chartContainer2').hide();
+                  $('#chartContainer3').hide();
+                  break;
+                case 1:
+                  $('#chartContainer1').hide();
+                  $('#chartContainer2').show();
+                  $('#chartContainer3').hide();
+                  break;
+                case 2:
+                  $('#chartContainer1').hide();
+                  $('#chartContainer2').hide();
+                  $('#chartContainer3').show();
+                  break;
+                default:
+                  
               }
-              var minimumKey = lowestValueAndKey(distances);
-              //console.log("this "+id +" has closest id "+ minimumKey);
-              $("#closestImg").attr("src", firefightersData[minimumKey].image);
-              $('#closestTxt').text(firefightersData[minimumKey].name + ' in '+ distances[minimumKey]+' km');
-              $('#altitude').text(dataValues[1][id]);
-              $('#colevel').text(dataValues[2][id]);
-              $('#temperature').text(dataValues[3][id]);
-              $('#humidity').text(dataValues[4][id]);
-              $('head').append('<style>.battery-icon:before { content: \'\'; position: absolute;left: 4px;top: 4px;width: '+dataValues[5][id]+'% ;height: 42px;background-color:rgb(13, 139, 70);border-radius: 5px;}</style>');
-              $('#percentage').text(dataValues[5][id]+' % ');
-              ///////
              
-              $('.vehicle_name', $('#vehicle_info')).text(firefightersData[id].name + ' (' + firefightersData[id].id +')');
+              
+
+              $('.vehicle_name', $('#vehicle_info')).text(firefightersData[id].name + ' (' + firefightersData[id]
+                .id + ')');
               $("#theImg").attr("src", firefightersData[id].image);
               $('#vehicle_info').removeClass('hidden');
             });
