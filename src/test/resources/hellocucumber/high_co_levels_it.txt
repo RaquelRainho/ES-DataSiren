@@ -1,0 +1,6 @@
+Feature: Generate a notification if the CO levels of a firefighter are dangerously high
+    
+    Scenario: The CO levels of a firefighter are above the safe values
+        Given the current CO sensor data is sent to the system
+        When the CO sensor data is greater than 250 ppm
+        Then send a related notification to the webpage

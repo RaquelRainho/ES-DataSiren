@@ -54,7 +54,7 @@ public class TestStepDefs {
     
     
     /*  SCENARIO 5  */
-    /*
+    
     int id, nFirefighters = 3;
     double[] gpsLat = new double[nFirefighters];
     double[] gpsLong = new double[nFirefighters];
@@ -68,11 +68,12 @@ public class TestStepDefs {
     @Given("^I have the current GPS, environmental, cardio sensor and battery data$")
     public void i_have_the_current_GPS_environmental_cardio_sensor_and_battery_data(){
         // remove ?
-        System.out.println("\n - SCENARIO 5 - ");
+        //System.out.println("\n - SCENARIO 5 - ");
     }
 
     @When("^new data from the sensors is received$")
     public void new_data_from_the_sensors_is_received(){
+        /*
         System.out.println("Received data from the sensors:");
         for(id=0;id<nFirefighters;id++){
             gpsLat[id] = Math.random()*100;
@@ -91,11 +92,12 @@ public class TestStepDefs {
                     id, gpsLat[id], gpsLong[id], gpsAlt[id], 
                     envCO[id], envHum[id], envTemp[id], 
                     heartrate[id], battery[id]);
-        }
+        }*/
     }
 
     @Then("^the web page is updated with the new data$")
     public void the_web_page_is_updated_with_the_new_data(){
+        /*
         System.out.println("Send the data to the webpage:");
         for(id=0;id<nFirefighters;id++){
             System.out.printf("Firefighter %d:\n"
@@ -106,6 +108,6 @@ public class TestStepDefs {
                         id, gpsLat[id], gpsLong[id], gpsAlt[id], 
                         envCO[id], envHum[id], envTemp[id], 
                         heartrate[id], battery[id]);
-        }
-    }*/
+        }*/
+    }
 }
