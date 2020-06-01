@@ -166,12 +166,25 @@
         </dependency>
         
         <!-- Database end -->
+
+        <!--  Logback for ELK  -->
         <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
-            <version>2.2.4.RELEASE</version>
-            <type>jar</type>
+            <groupId>com.internetitem</groupId>
+            <artifactId>logback-elasticsearch-appender</artifactId>
+            <version>1.6</version>
         </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+            <scope>runtime</scope>
+        </dependency><!--
+        <dependency>
+            <groupId>com.github.danielwegener</groupId>
+            <artifactId>logback-kafka-appender</artifactId>
+            <version>0.2.0</version>
+            <scope>runtime</scope>
+        </dependency>-->
     </dependencies>
 
     <build>
