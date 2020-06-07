@@ -52,6 +52,7 @@ while c < 160:
             row = next(csv.reader(islice(csv_file, hr_idx, hr_idx + 1)))
             data["firefighters"][2].update({"hr": row[1]})
         hr_idx += 1
+    print(data)
     producer.produce(json.dumps(data).encode())
     sleep(5)
     c += 1
