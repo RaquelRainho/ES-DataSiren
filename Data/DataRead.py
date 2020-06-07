@@ -8,7 +8,7 @@ client = KafkaClient(hosts='192.168.160.103:9093')
 topic = client.topics['esp24_AllSensorData']
 producer = topic.get_sync_producer()
 
-data = {"firefighters":[ dict() ,  dict() ,  dict() ], "alerts":[]}
+data = {"firefighters":[ dict() ,  dict() ,  dict() ]}
 c = 0
 env_idx = gps_idx = hr_idx = 1
 env_period = 60 / 6
@@ -32,13 +32,13 @@ while c < 160:
     if c % gps_period == 0:
         with open('a1_gps.csv') as csv_file:
             row = next(csv.reader(islice(csv_file, gps_idx, gps_idx + 1)))
-            data["firefighters"][0].update({"lat": row[1], "long": row[2], "alt": row[4]})
+            data["firefighters"][0].update({"lat": row[1], "longi": row[2], "alt": row[4]})
         with open('a2_gps.csv') as csv_file:
             row = next(csv.reader(islice(csv_file, gps_idx, gps_idx + 1)))
-            data["firefighters"][1].update({"lat": row[1], "long": row[2], "alt": row[4]})
+            data["firefighters"][1].update({"lat": row[1], "longi": row[2], "alt": row[4]})
         with open('vr12_gps.csv') as csv_file:
             row = next(csv.reader(islice(csv_file, gps_idx, gps_idx + 1)))
-            data["firefighters"][2].update({"lat": row[1], "long": row[2], "alt": row[4]})
+            data["firefighters"][2].update({"lat": row[1], "longi": row[2], "alt": row[4]})
         gps_idx += 1
     # HR DATA #
     if c % hr_period == 0:
