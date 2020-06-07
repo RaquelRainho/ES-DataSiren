@@ -29,6 +29,7 @@ public class WebpageDataUpdate {
     private final HashMap<Integer, Firefighter> firefighters = new HashMap<>();
     private final ObjectMapper mapper = new ObjectMapper();
     private final ArrayNode outerArray = mapper.createArrayNode();
+    private boolean first = true;
 
     @KafkaListener(topics = "esp24_GPS_v2", groupId = "UpdateWeb", containerFactory = "locationkafkaListenerContainerFactory")
     public void GPSWeb(@Payload Location data) {
@@ -179,9 +180,12 @@ public class WebpageDataUpdate {
         outerArray.add(outerObject1);
     }
 
-    @Scheduled(fixedRate = 3000, initialDelay = 10000)
+    @Scheduled(fixedRate = 5000, initialDelay = 30000)
     private void UpdateWebPag() {
-
+    	if(first) {
+    		outerArray.removeAll();
+    		first = false;
+    	}
         JsonNode actualObj = mapper.valueToTree(firefighters.values().toArray());
 
         ObjectNode outerObject = mapper.createObjectNode();
