@@ -79,7 +79,7 @@ pipeline {
                     sshagent(credentials: ['esp24']){
                         sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 uname -a"
                         sh "scp /var/jenkins_home/workspace/esp24-dataSiren-mb_master/Data/* esp24@192.168.160.103:/home/esp24"
-                        sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 python3 DataRead.py &"
+                        //sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 python3 DataRead.py &"
                         sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 docker pull 192.168.160.99:5000/esp24-datasiren"
                         sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 docker run -d -p 24010:8080 -p 24848:4848 --name esp24-datasiren 192.168.160.99:5000/esp24-datasiren"
                     }
