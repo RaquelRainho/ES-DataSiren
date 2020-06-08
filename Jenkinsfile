@@ -42,7 +42,7 @@ pipeline {
                 }
                 steps{
                     sh 'echo "running integration tests"'
-                    //sh 'mvn -Dit.test=IntegrationTest verify'
+                    sh 'mvn failsafe:integration-test@it-tests'
                 }
             }
 
@@ -93,11 +93,7 @@ pipeline {
                 steps{
                     sh 'echo "running tests"'
                     sleep 90
-                    sh 'mvn -Dtest=TestStepDefs test'
-                    
-                    //sshagent(credentials: ['esp24']){
-                    //    sh "ssh -o 'StrictHostKeyChecking=no' -l esp24 192.168.160.103 docker stop esp24-datasiren || true"
-                    //}
+                    sh 'mvn test -Dcucumber.filter.tags="@Production"'
                 }
             }
 	}

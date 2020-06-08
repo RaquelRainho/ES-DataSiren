@@ -6,7 +6,7 @@
 
     <groupId>pt.ua.deti.es.g24</groupId>
     <artifactId>datasiren</artifactId>
-    <version>0.0.9</version>
+    <version>0.1.6</version>
     <packaging>war</packaging>
 
     <name>datasiren</name>
@@ -204,6 +204,13 @@
                 <version>3.0.0-M4</version>
                 <executions>
                   <execution>
+                      <id>it-tests</id>
+                      <phase>none</phase>
+                      <configuration>
+                          <includes>
+                              <include>**/*IT.java</include>
+                          </includes>
+                      </configuration>
                     <goals>
                       <goal>integration-test</goal>
                       <goal>verify</goal>

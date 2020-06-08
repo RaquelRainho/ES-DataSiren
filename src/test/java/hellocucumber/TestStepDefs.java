@@ -1,5 +1,6 @@
 package hellocucumber;
 
+import cucumber.api.CucumberOptions;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -9,6 +10,7 @@ import org.jsoup.Jsoup;
 import static org.junit.Assert.*;
 import java.nio.file.Paths;
 
+@CucumberOptions(tags={"@Production"})
 public class TestStepDefs {
     
     /*  SCENARIO 1  */
@@ -38,7 +40,7 @@ public class TestStepDefs {
         System.out.printf("Notify dashboard that firefighter %d is in danger at Lat %d, Long %d, Alt %d\n",
                 firefighterID, firefighterLat, firefighterLong, firefighterAlt);
         
-        String webPage = "http://192.168.160.103:24010/datasiren-0.0.9/home";
+        String webPage = "http://192.168.160.103:24010/datasiren-0.1.6/home";
         try{
             String html = Jsoup.connect(webPage).get().getElementById("noti").html();
             System.out.println(html);
@@ -54,7 +56,7 @@ public class TestStepDefs {
     
     
     /*  SCENARIO 5  */
-    
+    /*
     int id, nFirefighters = 3;
     double[] gpsLat = new double[nFirefighters];
     double[] gpsLong = new double[nFirefighters];
@@ -73,7 +75,7 @@ public class TestStepDefs {
 
     @When("^new data from the sensors is received$")
     public void new_data_from_the_sensors_is_received(){
-        /*
+        
         System.out.println("Received data from the sensors:");
         for(id=0;id<nFirefighters;id++){
             gpsLat[id] = Math.random()*100;
@@ -92,12 +94,12 @@ public class TestStepDefs {
                     id, gpsLat[id], gpsLong[id], gpsAlt[id], 
                     envCO[id], envHum[id], envTemp[id], 
                     heartrate[id], battery[id]);
-        }*/
+        }
     }
 
     @Then("^the web page is updated with the new data$")
     public void the_web_page_is_updated_with_the_new_data(){
-        /*
+        
         System.out.println("Send the data to the webpage:");
         for(id=0;id<nFirefighters;id++){
             System.out.printf("Firefighter %d:\n"
@@ -108,6 +110,6 @@ public class TestStepDefs {
                         id, gpsLat[id], gpsLong[id], gpsAlt[id], 
                         envCO[id], envHum[id], envTemp[id], 
                         heartrate[id], battery[id]);
-        }*/
-    }
+        }
+    }*/
 }
