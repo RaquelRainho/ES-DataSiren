@@ -97,6 +97,11 @@ public class KafkaConsumerConfig {
     public ConcurrentKafkaListenerContainerFactory<String, Sensor> sensorProcessingKafkaListenerContainerFactory() {
         return sensorKafkaListenerContainerFactory("SensorProcessing");
     }
+    
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, Sensor> mainDatabaseSensorsKafkaListenerContainerFactory() {
+        return sensorKafkaListenerContainerFactory("mainDatabase");
+    }
 
     //Locations
     public ConsumerFactory<String, Location> locationConsumerFactory(String groupId) {
@@ -122,5 +127,10 @@ public class KafkaConsumerConfig {
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, Location> locationProcessingKafkaListenerContainerFactory() {
         return locationKafkaListenerContainerFactory("SensorProcessing");
+    }
+    
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, Location> mainDatabaseLocationsKafkaListenerContainerFactory() {
+        return locationKafkaListenerContainerFactory("mainDatabase");
     }
 }

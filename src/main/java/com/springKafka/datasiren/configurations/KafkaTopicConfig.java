@@ -26,46 +26,46 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic sensor_all() {
-        return new NewTopic("esp24_AllSensorData", 1, (short) 1);
+        return new NewTopic("esp24_AllSensorData", 5, (short) 1);
     }
 
     @Bean
     public NewTopic sensor_1() {
-        return new NewTopic("esp24_CO_v2", 1, (short) 1);
+        return new NewTopic("esp24_CO_v2", 5, (short) 1);
     }
 
     @Bean
     public NewTopic sensor_2() {
-        return new NewTopic("esp24_temperature_v2", 1, (short) 1);
+        return new NewTopic("esp24_temperature_v2", 5, (short) 1);
     }
 
     @Bean
     public NewTopic sensor_3() {
-        return new NewTopic("esp24_humidity_v2", 1, (short) 1);
+        return new NewTopic("esp24_humidity_v2", 5, (short) 1);
     }
 
     @Bean
     public NewTopic sensor_4() {
-        return new NewTopic("esp24_battery_v2", 1, (short) 1);
+        return new NewTopic("esp24_battery_v2", 5, (short) 1);
     }
 
     @Bean
     public NewTopic sensor_5() {
-        return new NewTopic("esp24_GPS_v2", 1, (short) 1);
+        return new NewTopic("esp24_GPS_v2", 5, (short) 1);
     }
 
     @Bean
     public NewTopic sensor_6() {
-        return new NewTopic("esp24_heartRate_v2", 1, (short) 1);
+        return new NewTopic("esp24_heartRate_v2", 5, (short) 1);
     }
 
     @Bean
     public NewTopic notifications() {
-        return new NewTopic("esp24_notifications_v2", 1, (short) 1);
+        return new NewTopic("esp24_notifications_v2", 5, (short) 1);
     }
 
     @Bean
     public NewTopic firefightersNames() {
-        return new NewTopic("esp24_firefightersNames", 1, (short) 1);
+        return new NewTopic("esp24_firefightersNames", 5, (short) 1);
     }
 }
