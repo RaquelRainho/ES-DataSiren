@@ -1,4 +1,4 @@
-package hellocucumber;
+package system_testing;
 
 import com.springKafka.datasiren.configurations.KafkaConsumerConfig;
 import com.springKafka.datasiren.configurations.WebSocketConfig;

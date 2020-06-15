@@ -1,4 +1,4 @@
-package hellocucumber;
+package system_testing;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
